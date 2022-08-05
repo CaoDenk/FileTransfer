@@ -1,0 +1,36 @@
+﻿<Window x:Class="FileTransferWpf.Views.ServerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="ServerWindow" Height="800" Width="600">
+    <StackPanel Name="stackTag">
+        <WrapPanel HorizontalAlignment="Center">
+            <TextBlock Text="文件传输(服务端)" FontSize="18"  Margin="0,10" />
+        </WrapPanel>
+
+        <WrapPanel Margin="0,10">
+            <TextBlock Text="输入绑定端口"
+					   FontSize="20"
+					   Margin="10"/>
+            <TextBox Width="100"
+					 Text="{Binding Port}"
+					 Height="40"
+					 FontSize="20" />
+            <Button  
+                    Click="BindPort"
+					 
+					 Margin="20,5"
+					 Width="80"
+					 HorizontalAlignment="Center"
+					 HorizontalContentAlignment="Center"
+					 Height="40"
+					 FontSize="20"
+					 Background="Red">未绑定</Button>
+
+        </WrapPanel>
+
+
+    </StackPanel>
+</Window>

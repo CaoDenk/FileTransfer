@@ -1,0 +1,83 @@
+﻿<Window x:Class="FileTransferWpf.views.ClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileTransferWpf.views"
+        mc:Ignorable="d"
+        
+        Title="ClientWindow" Height="800" Width="600">
+
+
+    <StackPanel>
+        <TextBlock Text="文件传输(客户端)" FontSize="18"  Margin="0,10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <WrapPanel>
+            <TextBlock  Text="输入对方ip"  FontSize="20" Margin="10,10,33,10"/>
+            <TextBox Width="200" Text="{Binding Ip}" FontSize="20"  Height="40" ></TextBox>
+        </WrapPanel>
+
+        <WrapPanel Margin="0,10">
+            <TextBlock Text="输入对方端口"   FontSize="20" Margin="10" />
+            <TextBox Width="100"  Text="{Binding Port}" x:Name="Port" FontSize="20" Height="40" ></TextBox>
+            <Button  Click="Connect"
+					 Name="ConnBtn"
+					 Margin="15,0"
+					 FontSize="20"
+					 Width="87"
+					 Height="40"
+					 HorizontalAlignment="Center"
+					 HorizontalContentAlignment="Center"
+					 Background="Red" 
+                     Content="未连接">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger  Binding="{Binding IsConnected}" Value="true">
+                                <Setter Property="Background" Value="LightBlue"/>
+                            </DataTrigger>
+                            <DataTrigger  Binding="{Binding IsConnected}" Value="false">
+                                <Setter Property="Background" Value="Red"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                        
+                    </Style>
+                </Button.Style>
+                
+                </Button>
+        </WrapPanel>
+        <!--<Button  Click="bind" Margin="0,5" Width="80" HorizontalAlignment="Center"  HorizontalContentAlignment="Center" Background="LightBlue" >绑定</Button>-->
+   
+
+        <WrapPanel >
+            <Button  
+                Click="OpenFiles"
+                Margin="0,0,10,0"
+				Width="80" 
+				HorizontalAlignment="Center"  
+				HorizontalContentAlignment="Center" 
+				Background="LightBlue" >选择文件</Button>
+            <Button  
+                Click="SendFile"
+				Width="80" 
+				HorizontalAlignment="Center"  
+				HorizontalContentAlignment="Center" 
+				Background="LightBlue" >发送文件</Button>
+        </WrapPanel>
+
+        <!--<Button  
+                Click="ReSendFile"
+				Width="80" 
+				HorizontalAlignment="Center"  
+				HorizontalContentAlignment="Center" 
+				Background="LightBlue" >重新发送文件</Button>-->
+
+        <TextBlock Text="{Binding ShowContent}"/>
+        <TextBox   Name="Content"  Text="{Binding TextInput}" AcceptsReturn="True"  FontSize="20" />
+        <Button  Margin="0,5" Width="80" 
+                 Click="SendText"
+				 HorizontalAlignment="Center"  
+				 HorizontalContentAlignment="Center" 
+				 Background="LightBlue">发送</Button>
+
+    </StackPanel>
+</Window>

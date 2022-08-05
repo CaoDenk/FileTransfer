@@ -1,0 +1,26 @@
+﻿<Window x:Class="FileTransferWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileTransferWpf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="300">
+    <StackPanel>
+        <!--<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+        <Button HorizontalAlignment="Center"
+				Click="NavicateToServerWindow"
+				Width="80" 
+				Background="LightBlue"
+				FontSize="18"
+				x:Name="ServerBtn"
+				Margin="10,10,0,5">Server</Button>
+        <Button HorizontalAlignment="Center"
+                Click="NavicateToClientWindow"
+				Width="80"
+				Background="LightBlue"
+				FontSize="18"
+				Margin="10,0,0,5">Client</Button>
+        <!--<HotKeyManager x:Key=""></HotKeyManager>-->
+    </StackPanel>
+</Window>
