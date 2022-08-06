@@ -29,12 +29,7 @@ namespace FileTransferWpf.ViewModels
         public Socket ClientSocket { get { return client.ClientSocket; } set { client.ClientSocket = value; } }
     
         public string TextInput { get; set; }="" ;
-        bool isConnected { set; get ; }
-        public bool IsConnected { get { return ClientSocket.Connected; } 
-            set { isConnected = value;
-                PropertyChanged(this, new PropertyChangedEventArgs("IsConnected"));
-            }  
-        }
+        public bool IsConnected => ClientSocket.Connected;
 
         string content;
         public string ShowContent 
@@ -53,12 +48,20 @@ namespace FileTransferWpf.ViewModels
         {
 
       
-                EndPoint endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
+            EndPoint endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
+            try
+            {
                 ClientSocket.Connect(endPoint);
-
                 //绑定后开始接收
                 Recv(changeBtnColor);
                 changeBtnColor(true);
+            }catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+              
+
+              
            
             
             
@@ -76,19 +79,25 @@ namespace FileTransferWpf.ViewModels
         /// 发送"发送文件请求"
         /// </summary>
         /// <param name="file"></param>
-        public void SendFileRequest(string fullFilePath)
+        public void SendFileRequest(string[] fullFilePaths)
         {
-            string uuid = Guid.NewGuid().ToString()[0..8];
-            
-            UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
-            uUIDSendFileModel.filepath = fullFilePath;
-            //uUIDSendFileModel.
-            uuidSendDict.Add(Encoding.UTF8.GetBytes(uuid), uUIDSendFileModel);
+            foreach(string fullFilePath in fullFilePaths)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    string uuid = Guid.NewGuid().ToString()[0..8];
 
+                    UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
+                    uUIDSendFileModel.filepath = fullFilePath;
+                    //uUIDSendFileModel.
+                    uuidSendDict.Add(Encoding.UTF8.GetBytes(uuid), uUIDSendFileModel);
+
+                    byte[] data = SendHandle.AddSendFileInfoHead(fullFilePath, uuid);
+                    ClientSocket.Send(data, SocketFlags.None);
+                });
+
+            }
            
-
-            byte[] data=SendHandle.AddSendFileInfoHead(fullFilePath,uuid);
-            ClientSocket.Send(data, SocketFlags.None);
         }
 
         /// <summary>
@@ -147,6 +156,8 @@ namespace FileTransferWpf.ViewModels
                     catch (Exception e)
                     {
                         changeBtnColor(false);
+                        CloseIOStream();
+                        uuidSendDict.Clear();
                         ClientSocket.Close();
                         ClientSocket=new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                         break;
@@ -187,6 +198,24 @@ namespace FileTransferWpf.ViewModels
         {
             uuidSendDict[uuidBytes].stream.Seek(offset, SeekOrigin.Begin);
         }
+        public void Close()
+        {
+
+            CloseIOStream(); 
+            ClientSocket.Close();
+
+        }
+
+        void CloseIOStream()
+        {
+
+            foreach (UUIDSendFileModel uUIDSendFileModel in uuidSendDict.Values)
+            {
+                uUIDSendFileModel.stream?.Close();
+            }
+        }
+
+        //public 
         
     }
 }

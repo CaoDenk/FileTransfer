@@ -56,7 +56,7 @@ namespace FileTransferWpf.Elements
                 sendText.Content = "发送";
                 sendText.HorizontalAlignment = HorizontalAlignment.Center;
                 sendText.Width = 200;
-                sendFile.Background= Brushes.LightBlue;
+                sendText.Background= Brushes.LightBlue;
                 sendText.Click += @event;
                 stackPanel.Children.Add(sendText);
 

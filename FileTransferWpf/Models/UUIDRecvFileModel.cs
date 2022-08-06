@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,10 @@ namespace FileTransferWpf.Models
         public DateTime start;
         public long hasRecvSize=0;
         public int packOrder=1;
-        //public DateTime end;
+
+        /// <summary>
+        /// 强制关闭需要
+        /// </summary>
+        public Socket recvSocket;
     }
 }

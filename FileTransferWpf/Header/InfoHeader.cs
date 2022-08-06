@@ -8,7 +8,7 @@ namespace FileTransferWpf.Header
 {
     internal class InfoHeader
     {
-        public const int TEXT=0;
+        public const int TEXT=1024;
         public const int FILE=1;
         public const int ALLOW_RECV=10;
         public const int REFUSE_RECV=11;

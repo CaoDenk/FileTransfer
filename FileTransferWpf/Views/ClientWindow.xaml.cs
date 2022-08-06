@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace FileTransferWpf.views
     public partial class ClientWindow : Window
     {
         ClientWindowViewModel clientWindowViewModel;
-        string fullFilePath;
+        string[] fullFilePaths;
 
         public ClientWindow()
         {
@@ -39,10 +40,6 @@ namespace FileTransferWpf.views
                 return;
             }
             clientWindowViewModel.Connect(ChangeBtnColor);
-            //bool res= clientWindowViewModel.Connect();
-
-            
-
         }
 
         private void SendText(object sender, RoutedEventArgs e)
@@ -53,20 +50,31 @@ namespace FileTransferWpf.views
         {
             //clientWindowViewModel.SendText();
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            
+            openFileDialog.Multiselect = true;
             bool? res=openFileDialog.ShowDialog();
             if(res.HasValue)
             {
 
-                fullFilePath = openFileDialog.FileName;
-                clientWindowViewModel.ShowContent = fullFilePath;
+                fullFilePaths = openFileDialog.FileNames;
+                foreach(string s in fullFilePaths)
+                {
+                    string tmp=s ;
+                    tmp += "\r\n";
+                    clientWindowViewModel.ShowContent += tmp;
+
+                }
+                //clientWindowViewModel.ShowContent = fullFilePath;
             }
 
         }
 
         private void SendFile(object sender, RoutedEventArgs e)
         {
-          clientWindowViewModel.SendFileRequest(fullFilePath);
-
+            if (fullFilePaths != null)
+                clientWindowViewModel.SendFileRequest(fullFilePaths);
+            else
+                MessageBox.Show("您还未选择文件,请选择文件");
         }
         void ChangeBtnColor(bool connected)
         {
@@ -86,10 +94,19 @@ namespace FileTransferWpf.views
                     ConnBtn.Background = Brushes.Red;
                 });
               
-
             }
 
         }
+        protected override void OnClosing(CancelEventArgs e)
+        {
 
+            clientWindowViewModel.Close();
+        }
+
+        private void ClearSendFileList(object sender, RoutedEventArgs e)
+        {
+            fullFilePaths = null;
+            clientWindowViewModel.ShowContent = "";
+        }
     }
 }

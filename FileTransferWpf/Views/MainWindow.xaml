@@ -7,7 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="400" Width="300">
     <StackPanel>
-        <!--<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+        <TextBlock HorizontalAlignment="Center">文件传输</TextBlock>
+        <WrapPanel>
+            <TextBlock FontSize="20">本机ip：</TextBlock>
+            <TextBox  Text="{Binding LocalIpv4}" IsReadOnly="True" BorderThickness="0" FontSize="20"/>
+        </WrapPanel>
+     
         <Button HorizontalAlignment="Center"
 				Click="NavicateToServerWindow"
 				Width="80" 
@@ -21,6 +26,5 @@
 				Background="LightBlue"
 				FontSize="18"
 				Margin="10,0,0,5">Client</Button>
-        <!--<HotKeyManager x:Key=""></HotKeyManager>-->
     </StackPanel>
 </Window>

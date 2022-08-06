@@ -48,11 +48,12 @@
         <!--<Button  Click="bind" Margin="0,5" Width="80" HorizontalAlignment="Center"  HorizontalContentAlignment="Center" Background="LightBlue" >绑定</Button>-->
    
 
-        <WrapPanel >
+        <WrapPanel Height="30" >
             <Button  
                 Click="OpenFiles"
                 Margin="0,0,10,0"
 				Width="80" 
+                Height="26"
 				HorizontalAlignment="Center"  
 				HorizontalContentAlignment="Center" 
 				Background="LightBlue" >选择文件</Button>
@@ -62,6 +63,13 @@
 				HorizontalAlignment="Center"  
 				HorizontalContentAlignment="Center" 
 				Background="LightBlue" >发送文件</Button>
+            <Button
+                Click="ClearSendFileList"
+                Margin="10,0,0,0"
+				Width="120" 
+				HorizontalAlignment="Center"  
+				HorizontalContentAlignment="Center" 
+                Background="LightBlue">清空文件发送列表</Button>
         </WrapPanel>
 
         <!--<Button  
@@ -73,8 +81,10 @@
 
         <TextBlock Text="{Binding ShowContent}"/>
         <TextBox   Name="Content"  Text="{Binding TextInput}" AcceptsReturn="True"  FontSize="20" />
-        <Button  Margin="0,5" Width="80" 
+        <Button  Margin="0,5" 
+                 Width="80" 
                  Click="SendText"
+                 Height="26"
 				 HorizontalAlignment="Center"  
 				 HorizontalContentAlignment="Center" 
 				 Background="LightBlue">发送</Button>

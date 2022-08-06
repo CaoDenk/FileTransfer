@@ -11,7 +11,7 @@ namespace FileTransferWpf.Tools
     internal class RecvHandle
     {
        
-        const int offset = 16;
+        const int OFFSET = 16;
          public static int GetDataType(byte[] data)
         {
 
@@ -22,7 +22,7 @@ namespace FileTransferWpf.Tools
         public static string GetProcessedText(byte[] data,int len)
         {
 
-            return Encoding.UTF8.GetString(data,offset,len-offset);
+            return Encoding.UTF8.GetString(data, OFFSET, len- OFFSET);
 
         }
 
@@ -31,15 +31,12 @@ namespace FileTransferWpf.Tools
 
             int jsInfoSize = BitConverter.ToInt32(data, 4);
             ReadOnlySpan<byte> jsInfoHeaderByte= new ReadOnlySpan<byte>(data);
-            JsonNode jsn = JsonObject.Parse(jsInfoHeaderByte.Slice(offset,jsInfoSize));
+            JsonNode jsn = JsonNode.Parse(jsInfoHeaderByte.Slice(OFFSET, jsInfoSize));
            
             RecvFile recvFile = new RecvFile();
             recvFile.filename = jsn.GetValue<string>("filename");
             recvFile.filesize = jsn.GetValue<long>("filesize");
             recvFile.uuidbytes = Encoding.UTF8.GetBytes(jsn.GetValue<string>("uuid"));
-            //recvFile.packagenum = jsn.GetValue<int>("packagenum");
-            //recvFile.packagenum
-           //string res=  jsonObject.GetValue<string>();
             
             return recvFile;
         }

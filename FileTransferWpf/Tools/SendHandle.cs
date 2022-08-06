@@ -24,6 +24,8 @@ namespace FileTransferWpf.Tools
         {
             byte[] bytes = Encoding.UTF8.GetBytes(s);
             byte[] dataWithHeader= new byte[bytes.Length+OFFSET];
+
+            WriteDataToBuffer(dataWithHeader, InfoHeader.TEXT, 0);
             Array.Copy(bytes, 0, dataWithHeader, OFFSET, bytes.Length);
             return dataWithHeader;
         }
