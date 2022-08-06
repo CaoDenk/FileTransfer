@@ -269,7 +269,11 @@ namespace FileTransferWpf.ViewModels
         }
         public void SetBarValue(ProgressBar bar,double value)
         {
-            Application.Current.Dispatcher.Invoke( () => { bar.Value = value;});
+            Application.Current.Dispatcher.Invoke( () => { 
+                bar.Value = value;
+                
+            }
+            );
         }
 
         /// <summary>

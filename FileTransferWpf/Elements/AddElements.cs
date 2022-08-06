@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace FileTransferWpf.Elements
@@ -7,6 +8,12 @@ namespace FileTransferWpf.Elements
     internal class AddElements
     {
         
+        /// <summary>
+        /// 添加元素
+        /// </summary>
+        /// <param name="panel"></param>
+        /// <param name="event"></param>
+        /// <returns></returns>
         public static StackPanel AddElement(StackPanel panel, RoutedEventHandler @event)
         {
 
@@ -29,12 +36,6 @@ namespace FileTransferWpf.Elements
                 sendFile.Background = Brushes.LightBlue;
                 wrapePanel.Children.Add(sendFile);
 
-
-                //Button reSend = new Button();
-                //reSend.Content = "重新发送文件";
-                //reSend.Margin = new Thickness(0, 0, 0, 0);
-                //reSend.Background = Brushes.LightBlue;
-                //wrapePanel.Children.Add(reSend);
 
                 stackPanel.Children.Add(wrapePanel);
 
@@ -63,13 +64,26 @@ namespace FileTransferWpf.Elements
                 
 
                
-
-
-
                 ProgressBar progressBar = new ProgressBar();
                 progressBar.Minimum = 0;
                 progressBar.Maximum = 100;
                 progressBar.Name = "ProgressBar";
+
+                TextBlock showProgress = new TextBlock();
+                showProgress.HorizontalAlignment= HorizontalAlignment.Right;
+
+                Binding mybinding = new Binding();
+                mybinding.Source = progressBar;
+                PropertyPath propertyPath = new PropertyPath(ProgressBar.ValueProperty);
+                mybinding.Path = propertyPath;
+
+
+                BindingOperations.SetBinding(showProgress, TextBlock.TextProperty, mybinding);
+
+                stackPanel.Children.Add(showProgress);
+
+                // showProgress.SetBinding(TextBlock.TextProperty, mybinding);
+                //progressBar.
                 //progressBar.
                 stackPanel.Children.Add(progressBar);
                 panel.Children.Add(stackPanel);
