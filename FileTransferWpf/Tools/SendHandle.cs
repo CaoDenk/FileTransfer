@@ -56,7 +56,7 @@ namespace FileTransferWpf.Tools
             Array.Copy(jsoBytes,0,data,OFFSET, jsoBytes.Length);
             return data;
         }
-      public static  void WriteDataToBuffer(byte[] data,int value,int offset)
+      public static  void WriteDataToBuffer(byte[] data,int value,int offset=0)
         {
           
             Span<byte> span = new Span<byte>(data);
@@ -76,11 +76,13 @@ namespace FileTransferWpf.Tools
             WriteDataToBuffer(bytes, InfoHeader.ALLOW_RECV, 0);
             return bytes;
         }
-        public static byte[] RefuseRecv()
+        public static byte[] RefuseRecv(byte[] uuibytes)
         {
             byte[] bytes = new byte[16];
+
             //Span<byte> span=new Span<byte>(bytes);
-            WriteDataToBuffer(bytes, InfoHeader.REFUSE_RECV, 16);
+            Array.Copy(uuibytes,0, bytes, 8,8);
+            WriteDataToBuffer(bytes, InfoHeader.REFUSE_RECV);
             return bytes;
 
         }
@@ -92,7 +94,7 @@ namespace FileTransferWpf.Tools
         public static void AddContinueRecv(byte[] buf,int packageOrder)
         {
 
-            WriteDataToBuffer(buf, InfoHeader.CONTINUE_RECV, 0);
+            WriteDataToBuffer(buf, InfoHeader.CONTINUE_RECV);
             WriteDataToBuffer(buf, packageOrder, 4);
 
         }
@@ -104,7 +106,7 @@ namespace FileTransferWpf.Tools
         {
 
             byte[] bytes = new byte[16];
-            WriteDataToBuffer(bytes, InfoHeader.FINISHED, 0);
+            WriteDataToBuffer(bytes, InfoHeader.FINISHED);
             Array.Copy(uuidBytes,0, bytes, 8,8);
             return bytes;
         }
@@ -116,7 +118,7 @@ namespace FileTransferWpf.Tools
         public static byte[] SendRecvOk(byte[] uuidbytes)
         {
             byte[] bytes = new byte[16];
-            WriteDataToBuffer(bytes, InfoHeader.OK_RECV, 0);
+            WriteDataToBuffer(bytes, InfoHeader.OK_RECV);
             //WriteDataToBuffer(data, 0, data.Length);
             Array.Copy(uuidbytes, 0, bytes, 8, 8);
             return bytes;
@@ -126,7 +128,7 @@ namespace FileTransferWpf.Tools
         public static byte[] SendResendPack(byte[] uuid,int packnum,long recvFileSize)
         {
             byte[] bytes=new byte[32];
-            WriteDataToBuffer(bytes, InfoHeader.RESEND_PACK, 0);
+            WriteDataToBuffer(bytes, InfoHeader.RESEND_PACK);
             WriteDataToBuffer(bytes, packnum, 4);
             Array.Copy(uuid, 0, bytes, 8, 8);
             
@@ -137,7 +139,7 @@ namespace FileTransferWpf.Tools
         public static byte[] SendCloseSend(byte[] uuid)
         {
             byte[] bytes = new byte[32];
-            WriteDataToBuffer(bytes, InfoHeader.CLOSE_SEND, 0);
+            WriteDataToBuffer(bytes, InfoHeader.CLOSE_SEND);
             Array.Copy(uuid, 0, bytes, 8, 8);
             Span<byte> buffer = new Span<byte>(bytes);
             return bytes;

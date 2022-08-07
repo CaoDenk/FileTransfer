@@ -48,10 +48,10 @@ namespace FileTransferWpf.views
         }
         private void OpenFiles(object sender, RoutedEventArgs e)
         {
-            //clientWindowViewModel.SendText();
             OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Title = "一次只能最多选两个，否则一次也只发送前两个";
+            //openFileDialog.Multiselect = true;
             
-            openFileDialog.Multiselect = true;
             bool? res=openFileDialog.ShowDialog();
             if(res.HasValue)
             {
@@ -64,7 +64,6 @@ namespace FileTransferWpf.views
                     clientWindowViewModel.ShowContent += tmp;
 
                 }
-                //clientWindowViewModel.ShowContent = fullFilePath;
             }
 
         }

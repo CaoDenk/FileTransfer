@@ -31,6 +31,8 @@ namespace FileTransferWpf.ViewModels
         public string TextInput { get; set; }="" ;
         public bool IsConnected => ClientSocket.Connected;
 
+       // List<string> 
+
         string content;
         public string ShowContent 
         { 
@@ -41,13 +43,10 @@ namespace FileTransferWpf.ViewModels
             } 
         }
 
-        //Dictionary<byte[], FileStream> uuidStreamDict = new Dictionary<byte[], FileStream>();
-        //public bool IsConnected => ClientSocket.Connected;
+
 
         public void Connect(ChangeBtnColor changeBtnColor)
-        {
-
-      
+        {    
             EndPoint endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
             try
             {
@@ -59,12 +58,7 @@ namespace FileTransferWpf.ViewModels
             {
                 MessageBox.Show(e.Message);
             }
-              
-
-              
-           
-            
-            
+                          
         }
         /// <summary>
         /// 发送文本
@@ -81,24 +75,39 @@ namespace FileTransferWpf.ViewModels
         /// <param name="file"></param>
         public void SendFileRequest(string[] fullFilePaths)
         {
-            foreach(string fullFilePath in fullFilePaths)
+            
+
+            foreach (string fullFilePath in fullFilePaths)
             {
-                Task.Factory.StartNew(() =>
-                {
-                    string uuid = Guid.NewGuid().ToString()[0..8];
+    
+                string uuid = Guid.NewGuid().ToString()[0..8];
 
-                    UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
-                    uUIDSendFileModel.filepath = fullFilePath;
-                    //uUIDSendFileModel.
-                    uuidSendDict.Add(Encoding.UTF8.GetBytes(uuid), uUIDSendFileModel);
+                UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
+                uUIDSendFileModel.filepath = fullFilePath;
+                //uUIDSendFileModel.
+                uuidSendDict.Add(Encoding.UTF8.GetBytes(uuid), uUIDSendFileModel);
 
-                    byte[] data = SendHandle.AddSendFileInfoHead(fullFilePath, uuid);
-                    ClientSocket.Send(data, SocketFlags.None);
-                });
-
+                byte[] data = SendHandle.AddSendFileInfoHead(fullFilePath, uuid);
+                ClientSocket.Send(data, SocketFlags.None);
             }
-           
+            
         }
+
+        //void SendFileRequest(string fullFilePath)
+        //{
+
+        //    string uuid = Guid.NewGuid().ToString()[0..8];
+
+        //    UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
+        //    uUIDSendFileModel.filepath = fullFilePath;
+        //    //uUIDSendFileModel.
+        //    uuidSendDict.Add(Encoding.UTF8.GetBytes(uuid), uUIDSendFileModel);
+
+        //    byte[] data = SendHandle.AddSendFileInfoHead(fullFilePath, uuid);
+        //    ClientSocket.Send(data, SocketFlags.None);
+
+
+        //}
 
         /// <summary>
         /// 接受请求
@@ -133,7 +142,6 @@ namespace FileTransferWpf.ViewModels
                                 uuidBytes = buf[8..16];
                                 long offset = BitConverter.ToInt64(buf, 16);
                                 ResendPack(uuidBytes, offset);
-                                //BitConverter.TryWriteBytes(buf, InfoHeader.CONTINUE_RECV);
                                 SendFile(uuidBytes, buf);
                                 break;
 
@@ -147,6 +155,10 @@ namespace FileTransferWpf.ViewModels
                                 uuidBytes = buf[8..16];
                                 uuidSendDict[uuidBytes].packnum++;
                                 SendFile(uuidBytes, buf);
+                                break;
+                            case InfoHeader.REFUSE_RECV:
+                                uuidBytes = buf[8..16];
+                                uuidSendDict.Remove(uuidBytes);
                                 break;
                             default:
                                 throw new Exception("错误信息头");
@@ -173,7 +185,7 @@ namespace FileTransferWpf.ViewModels
         {
       
             FileStream fileStream = uuidSendDict[uuidByte].stream;
-         
+            //Thread.Sleep(10);
             int len;
             if ((len=fileStream.Read(filebuf,16, Config.FULL_SIZE)) >0)
             {
