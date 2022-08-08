@@ -21,23 +21,23 @@ namespace FileTransferWpf.Elements
             {
                 StackPanel stackPanel = new StackPanel();
                 
-                WrapPanel wrapePanel = new WrapPanel();
+                //WrapPanel wrapePanel = new WrapPanel();
 
-                Button choose = new Button();
-                choose.Content = "选择文件";
-                choose.Margin = new Thickness(0, 0, 5, 0);
-                choose.Background = Brushes.LightBlue;
-                wrapePanel.Children.Add(choose); 
+                //Button choose = new Button();
+                //choose.Content = "选择文件";
+                //choose.Margin = new Thickness(0, 0, 5, 0);
+                //choose.Background = Brushes.LightBlue;
+                //wrapePanel.Children.Add(choose); 
             
 
-                Button sendFile = new Button();
-                sendFile.Content = "发送文件";
-                sendFile.Margin = new Thickness(0, 0, 0, 0);
-                sendFile.Background = Brushes.LightBlue;
-                wrapePanel.Children.Add(sendFile);
+                //Button sendFile = new Button();
+                //sendFile.Content = "发送文件";
+                //sendFile.Margin = new Thickness(0, 0, 0, 0);
+                //sendFile.Background = Brushes.LightBlue;
+                //wrapePanel.Children.Add(sendFile);
 
 
-                stackPanel.Children.Add(wrapePanel);
+                //stackPanel.Children.Add(wrapePanel);
 
                 TextBlock textBlock = new TextBlock();
                 textBlock.Name = "ShowRecvText";
@@ -69,18 +69,18 @@ namespace FileTransferWpf.Elements
                 progressBar.Maximum = 100;
                 progressBar.Name = "ProgressBar";
 
-                TextBlock showProgress = new TextBlock();
-                showProgress.HorizontalAlignment= HorizontalAlignment.Right;
+                //TextBlock showProgress = new TextBlock();
+                //showProgress.HorizontalAlignment= HorizontalAlignment.Right;
 
-                Binding mybinding = new Binding();
-                mybinding.Source = progressBar;
-                PropertyPath propertyPath = new PropertyPath(ProgressBar.ValueProperty);
-                mybinding.Path = propertyPath;
+                //Binding mybinding = new Binding();
+                //mybinding.Source = progressBar;
+                //PropertyPath propertyPath = new PropertyPath(ProgressBar.ValueProperty);
+                //mybinding.Path = propertyPath;
 
 
-                BindingOperations.SetBinding(showProgress, TextBlock.TextProperty, mybinding);
+                //BindingOperations.SetBinding(showProgress, TextBlock.TextProperty, mybinding);
 
-                stackPanel.Children.Add(showProgress);
+                //stackPanel.Children.Add(showProgress);
 
                 // showProgress.SetBinding(TextBlock.TextProperty, mybinding);
                 //progressBar.
@@ -93,9 +93,41 @@ namespace FileTransferWpf.Elements
 
             }
 
-
-
+        public static void SetBarValue(ProgressBar bar, double value)
+        {
+           Application.Current.Dispatcher.Invoke(() => {
+                bar.Value = value;
+            }
+            );
         }
+        public static ProgressBar AddProgressFromStackPanel(StackPanel panel)
+        {
+            return Application.Current.Dispatcher.Invoke<ProgressBar>(() => {
+
+
+                ProgressBar progressBar = new ProgressBar();
+                progressBar.Minimum = 0;
+                progressBar.Maximum = 100;
+                progressBar.Height = 10;
+                progressBar.Margin = new Thickness(0, 5, 0, 0);
+                //TextBlock showProgress = new TextBlock();
+                //showProgress.HorizontalAlignment = HorizontalAlignment.Right;
+
+                //Binding mybinding = new Binding();
+                //mybinding.Source = progressBar;
+                //PropertyPath propertyPath = new PropertyPath(ProgressBar.ValueProperty);
+                //mybinding.Path = propertyPath;
+                //BindingOperations.SetBinding(showProgress, TextBlock.TextProperty, mybinding);
+
+                //panel.Children.Add(showProgress);
+                //panel.Children.Add(progressBar);
+                panel.Children.Add(progressBar);
+
+                return progressBar;
+
+            });
+        }
+    }
 
 
     

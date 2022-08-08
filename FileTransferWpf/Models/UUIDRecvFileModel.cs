@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace FileTransferWpf.Models
 {
@@ -18,6 +19,7 @@ namespace FileTransferWpf.Models
         public long hasRecvSize=0;
         public int packOrder=1;
 
+        public ProgressBar progressBar;
         /// <summary>
         /// 强制关闭需要
         /// </summary>

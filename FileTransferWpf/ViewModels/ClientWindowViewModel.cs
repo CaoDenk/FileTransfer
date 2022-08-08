@@ -93,22 +93,6 @@ namespace FileTransferWpf.ViewModels
             
         }
 
-        //void SendFileRequest(string fullFilePath)
-        //{
-
-        //    string uuid = Guid.NewGuid().ToString()[0..8];
-
-        //    UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
-        //    uUIDSendFileModel.filepath = fullFilePath;
-        //    //uUIDSendFileModel.
-        //    uuidSendDict.Add(Encoding.UTF8.GetBytes(uuid), uUIDSendFileModel);
-
-        //    byte[] data = SendHandle.AddSendFileInfoHead(fullFilePath, uuid);
-        //    ClientSocket.Send(data, SocketFlags.None);
-
-
-        //}
-
         /// <summary>
         /// 接受请求
         /// </summary>
