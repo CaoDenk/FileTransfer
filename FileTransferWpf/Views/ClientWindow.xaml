@@ -79,7 +79,7 @@
 				HorizontalContentAlignment="Center" 
 				Background="LightBlue" >重新发送文件</Button>-->
 
-        <TextBlock Text="{Binding ShowContent}"/>
+        <TextBox Text="{Binding ShowContent}"  BorderThickness="0" IsReadOnly="True"/>
         <TextBox   Name="Content"  Text="{Binding TextInput}" AcceptsReturn="True"  FontSize="20" />
         <Button  Margin="0,5" 
                  Width="80" 

@@ -309,8 +309,8 @@ namespace FileTransferWpf.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                TextBlock texblock = panel.FindByName<TextBlock>("ShowRecvText");
-                texblock.Text = RecvHandle.GetProcessedText(buf, len);
+                TextBox texbox = panel.FindByName<TextBox>("ShowRecvText");
+                texbox.Text = RecvHandle.GetProcessedText(buf, len);
             });
 
         }

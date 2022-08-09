@@ -39,10 +39,10 @@ namespace FileTransferWpf.Elements
 
                 //stackPanel.Children.Add(wrapePanel);
 
-                TextBlock textBlock = new TextBlock();
-                textBlock.Name = "ShowRecvText";
-                
-                stackPanel.Children.Add(textBlock);
+                TextBox ShowRecvText = new TextBox();
+                ShowRecvText.Name = "ShowRecvText";
+                ShowRecvText.BorderThickness=new Thickness(0);
+                stackPanel.Children.Add(ShowRecvText);
 
                 TextBox textBox = new TextBox();
                 textBox.Name = "Content";
