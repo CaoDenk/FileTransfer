@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileTransferWpf.Elements;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,5 +13,8 @@ namespace FileTransferWpf.Models
         public FileStream stream;
         public string filepath;
         public int packnum = 0;
+        public ShowPercent showPercent;
+
+        public int totalpacknum;
     }
 }

@@ -1,4 +1,5 @@
-﻿using FileTransferWpf.Elements;
+﻿using FileTransfer.Models;
+using FileTransferWpf.Elements;
 using FileTransferWpf.GlobalConfig;
 using FileTransferWpf.Header;
 using FileTransferWpf.Models;
@@ -83,11 +84,11 @@ namespace FileTransferWpf.ViewModels
                         try{
                             Socket client = ServerSocket.Accept();
                             //clients.
-                            StackPanel stackPanel=  AddElements.AddElement(panel, @event);
-                            stackPanelSocketDict.Add(stackPanel, client);
+                            ShowRecvProgress showRecvProgress = AddElements.AddElement(panel, @event);
+                            stackPanelSocketDict.Add(showRecvProgress.stackPanelParent, client);
                             Task.Factory.StartNew(() =>
                             {
-                                ReceiveByOneClient(panel,client, stackPanel);
+                                ReceiveByOneClient(panel, client, showRecvProgress);
                             }
                            );
 
@@ -105,14 +106,15 @@ namespace FileTransferWpf.ViewModels
 
 
         }
-        void ReceiveByOneClient(StackPanel parentPanel,Socket client, StackPanel panel)
+        async void ReceiveByOneClient(StackPanel parentPanel, Socket client, ShowRecvProgress showRecvProgress)
         {
             byte[] buf = new byte[Config.FILE_BUFFER_SIZE];
 
 
-            byte[] uuidbytes=null;
+            byte[] uuidbytes = null;
             HashSet<byte[]> set = new HashSet<byte[]>(new ByteCmp());
-            List<ProgressBar> waitToRemoveList = new List<ProgressBar>();
+
+
             while (true)
             {
 
@@ -120,22 +122,23 @@ namespace FileTransferWpf.ViewModels
                 {
                     int len = client.Receive(buf);
                     int type = RecvHandle.GetDataType(buf);
-                   
+
                     switch (type)
                     {
                         case InfoHeader.TEXT:
-                            ShowContent(buf, panel, len);
+                            ShowContent(buf, showRecvProgress.showRecvText, len);
                             break;
                         case InfoHeader.FILE:
                             RecvFile recv = RecvHandle.GetRecvFileInfo(buf);
                             string msg = string.Format("是否接收文件{0},文件大小{1}字节", recv.filename, recv.filesize);
-                            MessageBoxResult messageBoxResult = MessageBox.Show(msg, "消息", MessageBoxButton.YesNo);
+                            MessageBoxResult messageBoxResult = MessageBox.Show(msg,"消息",  MessageBoxButton.YesNo);
                             if (messageBoxResult == MessageBoxResult.Yes)
                             {
                                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                                 saveFileDialog.FileName = recv.filename;
-                                bool? res = saveFileDialog.ShowDialog();
-                                if (res.HasValue && res.Value)
+                                var res = saveFileDialog.ShowDialog();
+                                //var res = await saveFileDialog.ShowDialog(parent);
+                                if (res.HasValue&&res!=false)
                                 {
 
                                     //创建文件
@@ -147,11 +150,11 @@ namespace FileTransferWpf.ViewModels
                                     uUIDFileModel.stream = fileStream;
                                     uUIDFileModel.start = DateTime.Now;
                                     uUIDFileModel.recvSocket = client;
-                                
-                                    uUIDFileModel.progressBar = AddElements.AddProgressFromStackPanel(panel);
+
+                                    uUIDFileModel.showPercent = AddElements.AddProgressFromStackPanel(showRecvProgress.stackPanelParent);
                                     //存在dict中
                                     uuidRecvDict.Add(recv.uuidbytes, uUIDFileModel);
-                                   
+
                                     //如果接收多个文件
                                     set.Add(recv.uuidbytes);
 
@@ -168,15 +171,15 @@ namespace FileTransferWpf.ViewModels
                             int packnum = BitConverter.ToInt32(buf, 4);
                             if (packnum != uuidRecvDict[uuidbytes].packOrder)
                             {
-                                client.Send(SendHandle.SendResendPack(uuidbytes, 0, uuidRecvDict[uuidbytes].hasRecvSize));
+                                client.Send(SendHandle.SendResendPack(uuidbytes, uuidRecvDict[uuidbytes].packOrder, uuidRecvDict[uuidbytes].hasRecvSize));
                                 break;
                             }
                             uuidRecvDict[uuidbytes].packOrder++;
                             uuidRecvDict[uuidbytes].hasRecvSize += len - 16;
                             double percent = uuidRecvDict[uuidbytes].hasRecvSize * 1.0 / uuidRecvDict[uuidbytes].filesize * 100;
-                            
-                            AddElements.SetBarValue(uuidRecvDict[uuidbytes].progressBar, percent);
-                            
+
+                            AddElements.SetBarValue(uuidRecvDict[uuidbytes].showPercent, percent);
+
                             uuidRecvDict[uuidbytes].stream.Write(buf, 16, len - 16);
                             uuidRecvDict[uuidbytes].stream.Flush();
 
@@ -197,50 +200,47 @@ namespace FileTransferWpf.ViewModels
                                 TimeSpan duration = DateTime.Now - uuidRecvDict[uuidbytes].start;
                                 Task.Factory.StartNew(() =>
                                 {
-                                    MessageBox.Show("接收完成,花费" + duration.TotalSeconds + "s");
+                                    MessageBox.Show( "接收完成,花费" + duration.TotalSeconds + "s");
                                 });
                                 client.Send(SendHandle.SendCloseSend(uuidbytes));
                                 uuidRecvDict[uuidbytes].stream.Close();
 
 
-                                waitToRemoveList.Add(uuidRecvDict[uuidbytes].progressBar);
+                                ShowPercent showPercent = uuidRecvDict[uuidbytes].showPercent;
+
+
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    showRecvProgress.stackPanelParent.Children.Remove(showPercent.bar);
+                                    showRecvProgress.stackPanelParent.Children.Remove(showPercent.percent);
+
+                                });
+
                                 uuidRecvDict.Remove(uuidbytes);
                                 set.Remove(uuidbytes);
-                                if(set.Count()==0)
-                                {
 
-                                    Application.Current.Dispatcher.InvokeAsync(() =>
-                                    {
-                                        foreach(ProgressBar bar in waitToRemoveList)
-                                        {
-                                            panel.Children.Remove(bar);
-                                        }
-                                        waitToRemoveList.Clear();
-                                    });
-
-                                }
 
                             }
                             else
                             {
                                 // MessageBox.Show("接收失败");
-                                client.Send(SendHandle.SendResendPack(uuidbytes, 0, uuidRecvDict[uuidbytes].hasRecvSize));
+                                client.Send(SendHandle.SendResendPack(uuidbytes, uuidRecvDict[uuidbytes].packnum, uuidRecvDict[uuidbytes].hasRecvSize));
                             }
                             break;
 
                         default:
                             //如果set中存在uuidbytes ，猜测这可能是发送文件的时候出现的,催促重新发送
-                           
-                            if (set.Count()==0)
+
+                            if (set.Count() == 0)
                             {
-                                MessageBox.Show("不合法的请求头");
+                                MessageBox.Show( "不合法的请求头");
                                 break;
                             }
                             else
                             {
                                 //可能同时接收多个文件，发个包，催促下
-                                foreach(byte[] uuid in set)
-                                    client.Send(SendHandle.SendResendPack(uuid, 0, uuidRecvDict[uuid].filesize));
+                                foreach (byte[] uuid in set)
+                                    client.Send(SendHandle.SendResendPack(uuid, uuidRecvDict[uuid].packOrder, uuidRecvDict[uuid].filesize));
                             }
                             break;
 
@@ -251,45 +251,46 @@ namespace FileTransferWpf.ViewModels
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message);
+                    MessageBox.Show(e.Message,"错误");
                     break;
 
                 }
                 finally
                 {
-                   
 
-                    if (!stackPanelSocketDict[panel].Connected)
+                    //关闭流，删除新创建的元素
+
+                    if (!client.Connected)
                     {
+
                         Application.Current.Dispatcher.Invoke(() =>
                         {
-                            parentPanel.Children.Remove(panel);
+                            parentPanel.Children.Remove(showRecvProgress.stackPanelParent);
+                            stackPanelSocketDict.Remove(parentPanel);
                         });
 
 
-                        //如果存在未关闭的流，关闭掉,移除所有关于改client任务
-                        foreach (byte[] uuidkey in uuidRecvDict.Keys)
+                        //如果同时接收多个文件 ,set里面储存所有uuid 为 key 的接收文件任务，循环删除
+                        foreach (byte[] uuidkey in set)
                         {
                             if (uuidRecvDict[uuidkey].recvSocket == client)
                             {
-                                uuidRecvDict[uuidkey].stream.Close();//必然接收
+                                uuidRecvDict[uuidkey].stream.Close();
                                 uuidRecvDict.Remove(uuidkey);
                             }
                         }
 
-                        stackPanelSocketDict.Remove(panel);
+
                     }
-
-
                 }
             }
 
-        }  
+        }
         /// <summary>
         /// 发送文本
         /// </summary>
         /// <param name="sender"></param>
-       public void SendText(Button sender)
+        public void SendText(Button sender)
         {
             StackPanel parent=  sender.Parent as StackPanel;
             TextBox textBox = parent.FindByName<TextBox>("Content");
@@ -297,7 +298,7 @@ namespace FileTransferWpf.ViewModels
             stackPanelSocketDict[parent].SendAsync(data, SocketFlags.None);
                 
         }
-      
+
 
         /// <summary>
         /// 显示接收文本
@@ -305,18 +306,17 @@ namespace FileTransferWpf.ViewModels
         /// <param name="buf"></param>
         /// <param name="panel"></param>
         /// <param name="len"></param>
-         void ShowContent(byte[] buf,StackPanel panel,int len)
+        void ShowContent(byte[] buf, TextBox textbox, int len)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                TextBox texbox = panel.FindByName<TextBox>("ShowRecvText");
-                texbox.Text = RecvHandle.GetProcessedText(buf, len);
+                textbox.Text = RecvHandle.GetProcessedText(buf, len);
             });
 
         }
-      
-  
 
-        
+
+      
+
     }
 }

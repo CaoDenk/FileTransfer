@@ -29,6 +29,7 @@ namespace FileTransferWpf.views
         {
             InitializeComponent();
             clientWindowViewModel = new ClientWindowViewModel();
+            clientWindowViewModel.panel = ClientStackTag;
             DataContext = clientWindowViewModel;
         }
 

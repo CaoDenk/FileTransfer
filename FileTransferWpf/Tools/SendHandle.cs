@@ -29,34 +29,27 @@ namespace FileTransferWpf.Tools
             Array.Copy(bytes, 0, dataWithHeader, OFFSET, bytes.Length);
             return dataWithHeader;
         }
-
-       /// <summary>
-       /// 添加发送文件请求头信息比如uuid
-       /// </summary>
-       /// <param name="file"></param>
-       /// <returns></returns>
-      public static  byte[] AddSendFileInfoHead(string fullFilePath, string uuid)
+        /// <summary>
+        /// 添加信息头
+        /// </summary>
+        /// <param name="js"></param>
+        /// <param name="uuid"></param>
+        /// <returns></returns>
+        public static byte[] AddSendFileInfoHead(JsonObject js, string uuid)
         {
 
-            FileInfo fileInfo = new FileInfo(fullFilePath);
 
-            JsonObject js= new JsonObject();
-            js.Add("filename",fileInfo.Name);
-            js.Add("filesize", fileInfo.Length);
-       
 
-            js.Add("uuid", uuid);
-
-            string jstr=js.ToString();
+            string jstr = js.ToString();
             byte[] jsoBytes = Encoding.UTF8.GetBytes(jstr);
-    
+
             byte[] data = new byte[Config.TEXT_BUFER_SIZE];
-            WriteDataToBuffer(data, InfoHeader.FILE,0);
-            WriteDataToBuffer(data,jsoBytes.Length,4);
-            Array.Copy(jsoBytes,0,data,OFFSET, jsoBytes.Length);
+            WriteDataToBuffer(data, InfoHeader.FILE, 0);
+            WriteDataToBuffer(data, jsoBytes.Length, 4);
+            Array.Copy(jsoBytes, 0, data, OFFSET, jsoBytes.Length);
             return data;
         }
-      public static  void WriteDataToBuffer(byte[] data,int value,int offset=0)
+        public static  void WriteDataToBuffer(byte[] data,int value,int offset=0)
         {
           
             Span<byte> span = new Span<byte>(data);

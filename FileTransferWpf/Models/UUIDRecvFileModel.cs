@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileTransferWpf.Elements;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace FileTransferWpf.Models
         public long hasRecvSize=0;
         public int packOrder=1;
 
-        public ProgressBar progressBar;
+        public ShowPercent showPercent;
         /// <summary>
         /// 强制关闭需要
         /// </summary>

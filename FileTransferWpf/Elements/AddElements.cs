@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using FileTransfer.Models;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -14,13 +15,16 @@ namespace FileTransferWpf.Elements
         /// <param name="panel"></param>
         /// <param name="event"></param>
         /// <returns></returns>
-        public static StackPanel AddElement(StackPanel panel, RoutedEventHandler @event)
+        public static ShowRecvProgress AddElement(StackPanel panel, RoutedEventHandler @event)
         {
 
-            return Application.Current.Dispatcher.Invoke<StackPanel>(() =>
+            return Application.Current.Dispatcher.Invoke<ShowRecvProgress>(() =>
             {
+
+                ShowRecvProgress showRecvProgress = new ShowRecvProgress();
+
                 StackPanel stackPanel = new StackPanel();
-                
+
                 //WrapPanel wrapePanel = new WrapPanel();
 
                 //Button choose = new Button();
@@ -28,7 +32,7 @@ namespace FileTransferWpf.Elements
                 //choose.Margin = new Thickness(0, 0, 5, 0);
                 //choose.Background = Brushes.LightBlue;
                 //wrapePanel.Children.Add(choose); 
-            
+
 
                 //Button sendFile = new Button();
                 //sendFile.Content = "发送文件";
@@ -38,18 +42,28 @@ namespace FileTransferWpf.Elements
 
 
                 //stackPanel.Children.Add(wrapePanel);
-
+                //显示接收内容
                 TextBox ShowRecvText = new TextBox();
                 ShowRecvText.Name = "ShowRecvText";
-                ShowRecvText.BorderThickness=new Thickness(0);
+                ShowRecvText.BorderThickness = new Thickness(0);
+                ShowRecvText.IsReadOnly = true;
+                ShowRecvText.Height = 40;
+           
+
+                showRecvProgress.showRecvText = ShowRecvText;
                 stackPanel.Children.Add(ShowRecvText);
 
+                //输入框
                 TextBox textBox = new TextBox();
                 textBox.Name = "Content";
-                textBox.Height = 24;
+                textBox.Height = 40;
                 textBox.AcceptsReturn = true;
                 textBox.FontSize = 18;
-                textBox.Margin= new Thickness(0, 0, 0, 5);
+                textBox.Margin = new Thickness(0, 0, 0, 5);
+       
+  
+
+                showRecvProgress.inputContent = textBox;
                 stackPanel.Children.Add(textBox);
 
 
@@ -57,61 +71,62 @@ namespace FileTransferWpf.Elements
                 sendText.Content = "发送";
                 sendText.HorizontalAlignment = HorizontalAlignment.Center;
                 sendText.Width = 200;
-                sendText.Background= Brushes.LightBlue;
+                sendText.Background =Brushes.LightBlue;
                 sendText.Click += @event;
+
+                showRecvProgress.sendText = sendText;
                 stackPanel.Children.Add(sendText);
 
-                
-
-               
-                ProgressBar progressBar = new ProgressBar();
-                progressBar.Minimum = 0;
-                progressBar.Maximum = 100;
-                progressBar.Name = "ProgressBar";
-
-                //TextBlock showProgress = new TextBlock();
-                //showProgress.HorizontalAlignment= HorizontalAlignment.Right;
-
-                //Binding mybinding = new Binding();
-                //mybinding.Source = progressBar;
-                //PropertyPath propertyPath = new PropertyPath(ProgressBar.ValueProperty);
-                //mybinding.Path = propertyPath;
 
 
-                //BindingOperations.SetBinding(showProgress, TextBlock.TextProperty, mybinding);
 
-                //stackPanel.Children.Add(showProgress);
+                //ProgressBar progressBar = new ProgressBar();
+                //progressBar.Minimum = 0;
+                //progressBar.Maximum = 100;
+                //progressBar.Name = "ProgressBar";
 
-                // showProgress.SetBinding(TextBlock.TextProperty, mybinding);
-                //progressBar.
-                //progressBar.
-                stackPanel.Children.Add(progressBar);
+
+
+                showRecvProgress.stackPanelParent = stackPanel;
+
                 panel.Children.Add(stackPanel);
-                return stackPanel;
+                return showRecvProgress;
 
-                });
+            });
 
             }
 
-        public static void SetBarValue(ProgressBar bar, double value)
+        public static void SetBarValue(ShowPercent percent, double value)
         {
-           Application.Current.Dispatcher.Invoke(() => {
-                bar.Value = value;
+            Application.Current.Dispatcher.Invoke(() => {
+                percent.bar.Value = value;
+                percent.percent.Text = value.ToString();
             }
             );
         }
-        public static ProgressBar AddProgressFromStackPanel(StackPanel panel)
+        public static ShowPercent AddProgressFromStackPanel(StackPanel panel)
         {
-            return Application.Current.Dispatcher.Invoke<ProgressBar>(() => {
+            return Application.Current.Dispatcher.Invoke<ShowPercent>(() => {
 
+
+
+                ShowPercent showPercent = new ShowPercent();
 
                 ProgressBar progressBar = new ProgressBar();
                 progressBar.Minimum = 0;
                 progressBar.Maximum = 100;
                 progressBar.Height = 10;
                 progressBar.Margin = new Thickness(0, 5, 0, 0);
-                //TextBlock showProgress = new TextBlock();
-                //showProgress.HorizontalAlignment = HorizontalAlignment.Right;
+
+                showPercent.bar = progressBar;
+                panel.Children.Add(progressBar);
+
+                TextBlock showProgress = new TextBlock();
+                showProgress.HorizontalAlignment = HorizontalAlignment.Right;
+
+                showPercent.percent = showProgress;
+
+                panel.Children.Add(showProgress);
 
                 //Binding mybinding = new Binding();
                 //mybinding.Source = progressBar;
@@ -121,9 +136,18 @@ namespace FileTransferWpf.Elements
 
                 //panel.Children.Add(showProgress);
                 //panel.Children.Add(progressBar);
-                panel.Children.Add(progressBar);
 
-                return progressBar;
+
+
+
+
+                return showPercent;
+
+
+
+
+
+
 
             });
         }
