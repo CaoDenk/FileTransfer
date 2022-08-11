@@ -15,7 +15,7 @@ namespace FileTransferWpf.Elements
         /// <param name="panel"></param>
         /// <param name="event"></param>
         /// <returns></returns>
-        public static ShowRecvProgress AddElement(StackPanel panel, RoutedEventHandler @event)
+        public static ShowRecvProgress AddElement(StackPanel panel, RoutedEventHandler sendtext)
         {
 
             return Application.Current.Dispatcher.Invoke<ShowRecvProgress>(() =>
@@ -31,7 +31,7 @@ namespace FileTransferWpf.Elements
                 //choose.Content = "选择文件";
                 //choose.Margin = new Thickness(0, 0, 5, 0);
                 //choose.Background = Brushes.LightBlue;
-                //wrapePanel.Children.Add(choose); 
+                //wrapePanel.Children.Add(choose);
 
 
                 //Button sendFile = new Button();
@@ -72,7 +72,7 @@ namespace FileTransferWpf.Elements
                 sendText.HorizontalAlignment = HorizontalAlignment.Center;
                 sendText.Width = 200;
                 sendText.Background =Brushes.LightBlue;
-                sendText.Click += @event;
+                sendText.Click += sendtext;
 
                 showRecvProgress.sendText = sendText;
                 stackPanel.Children.Add(sendText);

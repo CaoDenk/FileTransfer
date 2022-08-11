@@ -31,14 +31,14 @@ namespace FileTransferWpf.ViewModels
 
         Dictionary<StackPanel,Socket> stackPanelSocketDict = new Dictionary<StackPanel,Socket>();
 
-
+        //public Dictionary<byte[], UUIDSendFileModel> uuidSendDict = new Dictionary<byte[], UUIDSendFileModel>(new ByteCmp());
         /// <summary>
         /// 绑定端口
         /// </summary>
         public bool Bind()
         {
 
-            EndPoint endPoint = new System.Net.IPEndPoint(IPAddress.Any, Port);
+            EndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
             try
             {
                 ServerSocket.Bind(endPoint);
@@ -73,7 +73,7 @@ namespace FileTransferWpf.ViewModels
 
         }
 
-        public void Listen(StackPanel panel, RoutedEventHandler @event)
+        public void Listen(StackPanel panel)
         {
             ServerSocket.Listen();
             Task.Factory.StartNew(
@@ -84,7 +84,7 @@ namespace FileTransferWpf.ViewModels
                         try{
                             Socket client = ServerSocket.Accept();
                             //clients.
-                            ShowRecvProgress showRecvProgress = AddElements.AddElement(panel, @event);
+                            ShowRecvProgress showRecvProgress = AddElements.AddElement(panel, SendText);
                             stackPanelSocketDict.Add(showRecvProgress.stackPanelParent, client);
                             Task.Factory.StartNew(() =>
                             {
@@ -94,7 +94,7 @@ namespace FileTransferWpf.ViewModels
 
                         }catch(Exception e)
                         {
-                            //MessageBox.Show(e.Message);
+                            MessageBox.Show(e.Message);
                             //return;
                             break;
                         }
@@ -251,14 +251,7 @@ namespace FileTransferWpf.ViewModels
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(e.Message,"错误");
-                    break;
-
-                }
-                finally
-                {
-
-                    //关闭流，删除新创建的元素
+                    MessageBox.Show(e.Message);
 
                     if (!client.Connected)
                     {
@@ -282,21 +275,11 @@ namespace FileTransferWpf.ViewModels
 
 
                     }
+                    break;
+
                 }
             }
 
-        }
-        /// <summary>
-        /// 发送文本
-        /// </summary>
-        /// <param name="sender"></param>
-        public void SendText(Button sender)
-        {
-            StackPanel parent=  sender.Parent as StackPanel;
-            TextBox textBox = parent.FindByName<TextBox>("Content");
-            byte[] data = SendHandle.AddTextInfoHeader(textBox.Text);
-            stackPanelSocketDict[parent].SendAsync(data, SocketFlags.None);
-                
         }
 
 
@@ -314,9 +297,34 @@ namespace FileTransferWpf.ViewModels
             });
 
         }
+        /// <summary>
+        /// 发送文本
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private  void SendText(object sender, RoutedEventArgs e)
+        {
+            Button btn=sender as Button;
+
+            StackPanel parent = btn.Parent as StackPanel;
+            TextBox textBox = parent.FindByName<TextBox>("Content");
+            byte[] data = SendHandle.AddTextInfoHeader(textBox.Text);
+            stackPanelSocketDict[parent].SendAsync(data, SocketFlags.None);
+        }
 
 
-      
+        /// <summary>
+        /// 服务端需要发送文件么？代码是一样的
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SendFile(object sender, RoutedEventArgs e)
+        {
+
+
+
+
+        }
 
     }
 }
