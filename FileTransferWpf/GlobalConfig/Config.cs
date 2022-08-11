@@ -14,6 +14,6 @@ namespace FileTransferWpf.GlobalConfig
         public const int TEXT_BUFER_SIZE=1024;
         public const int FILE_BUFFER_SIZE=1024*64;
         public const int OFFSET = 16;
-        public const int FULL_SIZE = FILE_BUFFER_SIZE - OFFSET;
+        public const int FULL_SIZE = FILE_BUFFER_SIZE - OFFSET-4;
     }
 }

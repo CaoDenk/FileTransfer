@@ -168,19 +168,20 @@ namespace FileTransferWpf.ViewModels
                             break;
                         case InfoHeader.CONTINUE_RECV:
                             uuidbytes = buf[8..16];
-                            int packnum = BitConverter.ToInt32(buf, 4);
-                            if (packnum != uuidRecvDict[uuidbytes].packOrder)
+                            int packnum0 = BitConverter.ToInt32(buf, 4);
+                            int packnum1 = BitConverter.ToInt32(buf, len-4);
+                            if (packnum0 != uuidRecvDict[uuidbytes].packOrder||packnum1!= uuidRecvDict[uuidbytes].packOrder)
                             {
                                 client.Send(SendHandle.SendResendPack(uuidbytes, uuidRecvDict[uuidbytes].packOrder, uuidRecvDict[uuidbytes].hasRecvSize));
                                 break;
                             }
                             uuidRecvDict[uuidbytes].packOrder++;
-                            uuidRecvDict[uuidbytes].hasRecvSize += len - 16;
+                            uuidRecvDict[uuidbytes].hasRecvSize += len - 20;
                             double percent = uuidRecvDict[uuidbytes].hasRecvSize * 1.0 / uuidRecvDict[uuidbytes].filesize * 100;
 
                             AddElements.SetBarValue(uuidRecvDict[uuidbytes].showPercent, percent);
 
-                            uuidRecvDict[uuidbytes].stream.Write(buf, 16, len - 16);
+                            uuidRecvDict[uuidbytes].stream.Write(buf, 16, len - 20);
                             uuidRecvDict[uuidbytes].stream.Flush();
 
                             //发送接受成功

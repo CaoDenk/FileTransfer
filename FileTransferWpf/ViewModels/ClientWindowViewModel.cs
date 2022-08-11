@@ -34,6 +34,8 @@ namespace FileTransferWpf.ViewModels
         public string TextInput { get; set; }="" ;
         public bool IsConnected => ClientSocket.Connected;
 
+
+        byte[] filebuf = new byte[Config.FILE_BUFFER_SIZE];
         // List<string> 
         public StackPanel panel;
         string content;
@@ -114,7 +116,7 @@ namespace FileTransferWpf.ViewModels
         {
             Task.Factory.StartNew(() =>
             {
-                byte[] buf = new byte[Config.FILE_BUFFER_SIZE];
+                byte[] buf = new byte[Config.TEXT_BUFER_SIZE];
                 while (true)
                 {
                     try
@@ -136,14 +138,15 @@ namespace FileTransferWpf.ViewModels
                                 FileStream fileStream = File.OpenRead(filepath);
                                 uuidSendDict[uuidBytes].stream = fileStream;
                                 uuidSendDict[uuidBytes].showPercent = AddElements.AddProgressFromStackPanel(panel);
-                                goto case InfoHeader.OK_RECV;
+                                SendFile(uuidBytes);
+                                break;
                             case InfoHeader.RESEND_PACK:
                                 uuidBytes = buf[8..16];
                                 int packageOrder = BitConverter.ToInt32(buf, 4);
                                 uuidSendDict[uuidBytes].packnum = packageOrder;
                                 long offset = BitConverter.ToInt64(buf, 16);
                                 ResendPack(uuidBytes, offset);
-                                SendFile(uuidBytes, buf);
+                                SendFile(uuidBytes);
                                 break;
 
                             case InfoHeader.CLOSE_SEND:
@@ -165,9 +168,9 @@ namespace FileTransferWpf.ViewModels
                                 uuidSendDict[uuidBytes].packnum++;
                                 double percent = (uuidSendDict[uuidBytes].packnum * 100.0 / uuidSendDict[uuidBytes].totalpacknum);
                                 AddElements.SetBarValue(uuidSendDict[uuidBytes].showPercent, percent);
-                                uuidBytes = buf[8..16];
+                          
 
-                                SendFile(uuidBytes, buf);
+                                SendFile(uuidBytes);
                                 break;
                             case InfoHeader.REFUSE_RECV:
                                 uuidBytes = buf[8..16];
@@ -194,7 +197,7 @@ namespace FileTransferWpf.ViewModels
             );
 
         }
-        public void SendFile(byte[] uuidByte, byte[] filebuf)
+        public void SendFile(byte[] uuidByte)
         {
       
             FileStream fileStream = uuidSendDict[uuidByte].stream;
@@ -204,7 +207,9 @@ namespace FileTransferWpf.ViewModels
             {
                 SendHandle.AddContinueRecv(filebuf, uuidSendDict[uuidByte].packnum);
                 Array.Copy(uuidByte,0,filebuf,8,8);
-                ClientSocket.Send(filebuf,0,len+16,SocketFlags.None);
+                SendHandle.WriteDataToBuffer(filebuf, uuidSendDict[uuidByte].packnum, len+16);
+
+                ClientSocket.Send(filebuf,0,len+20,SocketFlags.None);
                
             }
             else
