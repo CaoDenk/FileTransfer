@@ -21,11 +21,11 @@ namespace FileTransferWpf.Views
     /// </summary>
     public partial class ServerWindow : Window
     {
-        ServerWindowViewModel serverWindowViewModel;
+        ServerWindowViewModel serverWindowViewModel = new ServerWindowViewModel();
         public ServerWindow()
         {
             InitializeComponent();
-            serverWindowViewModel = new ServerWindowViewModel();
+            //serverWindowViewModel = new ServerWindowViewModel();
             DataContext= serverWindowViewModel;
 
             
@@ -39,7 +39,7 @@ namespace FileTransferWpf.Views
                 return;
             }
             bool res= serverWindowViewModel.Bind();
-            serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
+           //serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
             if(!res)
             {
                 MessageBox.Show("绑定端口失败，请尝试更换端口", "错误");
@@ -61,6 +61,14 @@ namespace FileTransferWpf.Views
             serverWindowViewModel.Close();
         }
 
-      
+        private void unitSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
+        }
     }
 }

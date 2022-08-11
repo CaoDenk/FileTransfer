@@ -30,7 +30,7 @@ namespace FileTransferWpf.ViewModels
 
         public int fileBufSize { set; get; }=32;
 
-        int calcFileBufSize;
+        int calcFileBufSize=32*1024;
 
         public Dictionary<byte[], UUIDRecvFileModel> uuidRecvDict = new Dictionary<byte[], UUIDRecvFileModel>(new ByteCmp());
 
