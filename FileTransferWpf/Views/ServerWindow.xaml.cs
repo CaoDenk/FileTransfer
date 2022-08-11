@@ -27,6 +27,8 @@ namespace FileTransferWpf.Views
             InitializeComponent();
             serverWindowViewModel = new ServerWindowViewModel();
             DataContext= serverWindowViewModel;
+
+            
         }
 
         private void BindPort(object sender, RoutedEventArgs e)
@@ -37,6 +39,7 @@ namespace FileTransferWpf.Views
                 return;
             }
             bool res= serverWindowViewModel.Bind();
+            serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
             if(!res)
             {
                 MessageBox.Show("绑定端口失败，请尝试更换端口", "错误");

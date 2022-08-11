@@ -35,7 +35,9 @@ namespace FileTransferWpf.ViewModels
         public bool IsConnected => ClientSocket.Connected;
 
 
-        byte[] filebuf = new byte[Config.FILE_BUFFER_SIZE];
+        public int fileBufSize { set; get; } = 32;
+
+        byte[] filebuf;//= new byte[Config.FILE_BUFFER_SIZE];
         // List<string> 
         public StackPanel panel;
         string content;
@@ -106,7 +108,7 @@ namespace FileTransferWpf.ViewModels
                 byte[] data = SendHandle.AddSendFileInfoHead(js, uuid);
                 ClientSocket.Send(data, SocketFlags.None);
             }
-            MessageBox.Show("已发送");
+            MessageBox.Show("已发送,等待对方同意接收");
         }
 
         /// <summary>
@@ -114,6 +116,8 @@ namespace FileTransferWpf.ViewModels
         /// </summary>
         public void Recv(ChangeBtnColor changeBtnColor)
         {
+            
+
             Task.Factory.StartNew(() =>
             {
                 byte[] buf = new byte[Config.TEXT_BUFER_SIZE];
@@ -175,6 +179,7 @@ namespace FileTransferWpf.ViewModels
                             case InfoHeader.REFUSE_RECV:
                                 uuidBytes = buf[8..16];
                                 uuidSendDict.Remove(uuidBytes);
+                                MessageBox.Show("对方已拒绝接收");
                                 break;
                             default:
                                 throw new Exception("错误信息头");
@@ -199,7 +204,7 @@ namespace FileTransferWpf.ViewModels
         }
         public void SendFile(byte[] uuidByte)
         {
-      
+            
             FileStream fileStream = uuidSendDict[uuidByte].stream;
             //Thread.Sleep(10);
             int len;
@@ -245,7 +250,16 @@ namespace FileTransferWpf.ViewModels
             }
         }
 
-        //public 
+        public void SetBufSize(int index)
+        {
+
+            if(index == (int)UnitSize.KBYTES)
+            {
+                filebuf=new byte[fileBufSize*1024];
+            }else
+                filebuf=new byte[fileBufSize];
+
+        }
         
     }
 }

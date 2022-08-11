@@ -4,20 +4,41 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="ServerWindow" Height="800" Width="600">
+        Title="ServerWindow" Height="800" Width="700">
     <StackPanel Name="stackTag">
         <WrapPanel HorizontalAlignment="Center">
             <TextBlock Text="文件传输(服务端)" FontSize="18"  Margin="0,10" />
         </WrapPanel>
 
         <WrapPanel Margin="0,10">
-            <TextBlock Text="输入绑定端口"
+            <TextBlock 
 					   FontSize="20"
-					   Margin="10"/>
+					   Margin="10">输入端口：</TextBlock>
             <TextBox Width="100"
 					 Text="{Binding Port}"
+                     HorizontalContentAlignment="Center"
+                     VerticalContentAlignment="Center"
 					 Height="40"
 					 FontSize="20" />
+        
+            <TextBlock FontSize="20"  Margin="10">设置缓冲区大小:</TextBlock>
+            <TextBox Width="100" 
+                     Height="40"
+                     HorizontalContentAlignment="Center"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding fileBufSize}"
+					 FontSize="20"/>
+            <ComboBox HorizontalContentAlignment="Center" 
+                      VerticalContentAlignment="Center" 
+                      Margin="10,0,0,0"
+                      Width="40"
+                      x:Name="unitSize"
+                      Height="40">
+                <ComboBoxItem  IsSelected="True">K</ComboBoxItem>
+                <ComboBoxItem>B</ComboBoxItem>
+            </ComboBox>
+
+          
             <Button  
                     Click="BindPort"
 					 
@@ -28,7 +49,6 @@
 					 Height="40"
 					 FontSize="20"
 					 Background="Red">未绑定</Button>
-
         </WrapPanel>
 
 

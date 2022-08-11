@@ -27,6 +27,11 @@ namespace FileTransferWpf.ViewModels
         public Socket ServerSocket { get { return server.ServerSocket; } set { server.ServerSocket = value; } }
         public bool IsBound => ServerSocket.IsBound;
 
+
+        public int fileBufSize { set; get; }=32;
+
+        int calcFileBufSize;
+
         public Dictionary<byte[], UUIDRecvFileModel> uuidRecvDict = new Dictionary<byte[], UUIDRecvFileModel>(new ByteCmp());
 
         Dictionary<StackPanel,Socket> stackPanelSocketDict = new Dictionary<StackPanel,Socket>();
@@ -37,6 +42,8 @@ namespace FileTransferWpf.ViewModels
         /// </summary>
         public bool Bind()
         {
+
+
 
             EndPoint endPoint = new IPEndPoint(IPAddress.Any, Port);
             try
@@ -108,7 +115,7 @@ namespace FileTransferWpf.ViewModels
         }
         async void ReceiveByOneClient(StackPanel parentPanel, Socket client, ShowRecvProgress showRecvProgress)
         {
-            byte[] buf = new byte[Config.FILE_BUFFER_SIZE];
+            byte[] buf = new byte[calcFileBufSize];
 
 
             byte[] uuidbytes = null;
@@ -326,6 +333,16 @@ namespace FileTransferWpf.ViewModels
 
 
         }
+        public void SetBufSize(int index)
+        {
 
+            if (index == (int)UnitSize.KBYTES)
+            {
+                calcFileBufSize = fileBufSize * 1024;
+            }
+            else
+                calcFileBufSize = fileBufSize;
+
+        }
     }
 }

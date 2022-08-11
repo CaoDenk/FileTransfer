@@ -40,6 +40,8 @@ namespace FileTransferWpf.views
                 MessageBox.Show("已经连接，请勿重复操作", "警告");
                 return;
             }
+
+            clientWindowViewModel.SetBufSize(unitSize.SelectedIndex);
             clientWindowViewModel.Connect(ChangeBtnColor);
         }
 
