@@ -52,7 +52,7 @@ namespace FileTransferWpf.ViewModels
 
 
 
-        public void Connect(ChangeBtnColor changeBtnColor)
+        public void Connect(Action<bool> changeBtnColor)
         {    
             EndPoint endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
             try
@@ -114,7 +114,7 @@ namespace FileTransferWpf.ViewModels
         /// <summary>
         /// 接受请求
         /// </summary>
-        public void Recv(ChangeBtnColor changeBtnColor)
+        public void Recv(Action<bool> changeBtnColor)
         {
             
 

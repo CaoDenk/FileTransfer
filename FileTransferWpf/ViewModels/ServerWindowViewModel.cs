@@ -322,7 +322,7 @@ namespace FileTransferWpf.ViewModels
 
 
         /// <summary>
-        /// 服务端需要发送文件么？代码是一样的
+        /// 服务端需要发送文件么？代码是一样的,算了，不写了
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

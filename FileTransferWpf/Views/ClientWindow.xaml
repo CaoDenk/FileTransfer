@@ -13,14 +13,18 @@
         <TextBlock Text="文件传输(客户端)" FontSize="18"  Margin="0,10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <WrapPanel Height="50">
             <TextBlock  Text="输入对方的IP:"  FontSize="20" Margin="10,0,33,0" VerticalAlignment="Center"/>
-            <TextBox Width="200" Text="{Binding Ip}" FontSize="20"  Height="40" />
+            <TextBox Width="200" 
+                     Text="{Binding Ip}" 
+                     x:Name="IpTextBox"
+                     FontSize="20" 
+                     Height="40" />
         
         </WrapPanel>
         <WrapPanel Height="50">
             <TextBlock Text="输入对方端口:" VerticalAlignment="Center"  FontSize="20" Margin="10,0,10,0" />
             <TextBox Width="100" 
                      Text="{Binding Port}" 
-                     x:Name="Port" 
+                     x:Name="PortTextBox" 
                      FontSize="20"
                      Margin="20,0,33,0"
                      Height="40" />
@@ -29,15 +33,15 @@
             <TextBlock FontSize="20"  Margin="10">设置缓冲区大小:</TextBlock>
                <TextBox Width="100" 
                      Height="40"
-                     HorizontalContentAlignment="Center"
                      VerticalContentAlignment="Center"
                      Text="{Binding fileBufSize}"
+                     x:Name="BufSizeTextBox"
 					 FontSize="20"/>
             <ComboBox HorizontalContentAlignment="Center" 
                       VerticalContentAlignment="Center" 
                       Margin="10,0,10,0"
                       Width="40"
-                      x:Name="unitSize"
+                      x:Name="UnitSizeComboBox"
                       Height="40">
                
                 <ComboBoxItem IsSelected="True">K</ComboBoxItem>
@@ -86,12 +90,6 @@
                 Background="LightBlue">清空文件发送列表</Button>
         </WrapPanel>
 
-        <!--<Button  
-                Click="ReSendFile"
-				Width="80" 
-				HorizontalAlignment="Center"  
-				HorizontalContentAlignment="Center" 
-				Background="LightBlue" >重新发送文件</Button>-->
 
         <TextBox Text="{Binding ShowContent}"  BorderThickness="0" IsReadOnly="True"/>
         <TextBox   Name="Content"  Text="{Binding TextInput}" AcceptsReturn="True"  FontSize="20" />

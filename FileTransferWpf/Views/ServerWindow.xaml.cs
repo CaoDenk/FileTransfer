@@ -25,7 +25,6 @@ namespace FileTransferWpf.Views
         public ServerWindow()
         {
             InitializeComponent();
-            //serverWindowViewModel = new ServerWindowViewModel();
             DataContext= serverWindowViewModel;
 
             
@@ -39,7 +38,6 @@ namespace FileTransferWpf.Views
                 return;
             }
             bool res= serverWindowViewModel.Bind();
-           //serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
             if(!res)
             {
                 MessageBox.Show("绑定端口失败，请尝试更换端口", "错误");
@@ -49,6 +47,12 @@ namespace FileTransferWpf.Views
                 btn.Content = "已绑定";
                 btn.Background = Brushes.LightBlue;
                 serverWindowViewModel.Listen(stackTag);
+
+                UnitSizeComboBox.IsHitTestVisible = false;
+                //UnitSizeComboBox.MouseEnter-=
+                PortTextBox.IsReadOnly = true;
+                BufSizeTextBox.IsReadOnly=true;
+
             }
 
         }
@@ -61,14 +65,14 @@ namespace FileTransferWpf.Views
             serverWindowViewModel.Close();
         }
 
-        private void unitSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
-        }
+        //private void unitSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    serverWindowViewModel.SetBufSize(UnitSizeComboBox.SelectedIndex);
+        //}
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            serverWindowViewModel.SetBufSize(unitSize.SelectedIndex);
-        }
+        //private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    serverWindowViewModel.SetBufSize(UnitSizeComboBox.SelectedIndex);
+        //}
     }
 }

@@ -22,17 +22,22 @@ namespace FileTransferWpf.views
     /// </summary>
     public partial class ClientWindow : Window
     {
-        ClientWindowViewModel clientWindowViewModel;
-        string[] fullFilePaths;
+        ClientWindowViewModel clientWindowViewModel = new ClientWindowViewModel();
+        string[]? fullFilePaths;
 
         public ClientWindow()
         {
             InitializeComponent();
-            clientWindowViewModel = new ClientWindowViewModel();
             clientWindowViewModel.panel = ClientStackTag;
             DataContext = clientWindowViewModel;
         }
 
+
+        /// <summary>
+        /// 连接前调用设置缓冲区大小，连接后不能修改
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Connect(object sender, RoutedEventArgs e)
         {
             if(clientWindowViewModel.IsConnected)
@@ -41,7 +46,7 @@ namespace FileTransferWpf.views
                 return;
             }
 
-            clientWindowViewModel.SetBufSize(unitSize.SelectedIndex);
+            clientWindowViewModel.SetBufSize(UnitSizeComboBox.SelectedIndex);
             clientWindowViewModel.Connect(ChangeBtnColor);
         }
 
@@ -86,6 +91,11 @@ namespace FileTransferWpf.views
                 {
                     ConnBtn.Content = "已连接";
                     ConnBtn.Background = Brushes.LightBlue;
+
+                    UnitSizeComboBox.IsHitTestVisible = false;
+                    IpTextBox.IsReadOnly = true;
+                    PortTextBox.IsReadOnly = true;
+                    BufSizeTextBox.IsReadOnly = true;
                 });
             }
             else
@@ -94,6 +104,10 @@ namespace FileTransferWpf.views
                 {
                     ConnBtn.Content = "未连接";
                     ConnBtn.Background = Brushes.Red;
+                    UnitSizeComboBox.IsHitTestVisible = true;
+                    IpTextBox.IsReadOnly = false;
+                    PortTextBox.IsReadOnly = false;
+                    BufSizeTextBox.IsReadOnly = false;
                 });
               
             }
@@ -110,5 +124,8 @@ namespace FileTransferWpf.views
             fullFilePaths = null;
             clientWindowViewModel.ShowContent = "";
         }
+
+     
+
     }
 }

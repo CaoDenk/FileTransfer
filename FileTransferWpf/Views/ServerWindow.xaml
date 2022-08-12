@@ -18,6 +18,7 @@
 					 Text="{Binding Port}"
                      HorizontalContentAlignment="Center"
                      VerticalContentAlignment="Center"
+                     x:Name="PortTextBox"
 					 Height="40"
 					 FontSize="20" />
         
@@ -27,16 +28,15 @@
                      HorizontalContentAlignment="Center"
                      VerticalContentAlignment="Center"
                      Text="{Binding fileBufSize}"
-                     TextChanged="TextBox_TextChanged"
+                     x:Name="BufSizeTextBox"
 					 FontSize="20"/>
             <ComboBox HorizontalContentAlignment="Center" 
                       VerticalContentAlignment="Center" 
                       Margin="10,0,0,0"
                       Width="40"
-                      SelectionChanged="unitSize_SelectionChanged"
-                      x:Name="unitSize"
+                      x:Name="UnitSizeComboBox"
                       Height="40">
-                <ComboBoxItem  IsSelected="True">K</ComboBoxItem>
+                <ComboBoxItem  IsSelected="True" >K</ComboBoxItem>
                 <ComboBoxItem>B</ComboBoxItem>
             </ComboBox>
 
