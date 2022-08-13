@@ -34,10 +34,14 @@ namespace FileTransferWpf.ViewModels
         public string TextInput { get; set; }="" ;
         public bool IsConnected => ClientSocket.Connected;
 
-
         public int fileBufSize { set; get; } = 32;
 
-        byte[] filebuf;//= new byte[Config.FILE_BUFFER_SIZE];
+        int calcFileBufSize = 32 * 1024;
+
+        /// <summary>
+        /// 文件缓冲区
+        /// </summary>
+        byte[] filebuf;
         // List<string> 
         public StackPanel panel;
         string content;
@@ -120,7 +124,7 @@ namespace FileTransferWpf.ViewModels
 
             Task.Factory.StartNew(() =>
             {
-                byte[] buf = new byte[Config.TEXT_BUFER_SIZE];
+                byte[] buf = new byte[calcFileBufSize];
                 while (true)
                 {
                     try
@@ -253,14 +257,16 @@ namespace FileTransferWpf.ViewModels
         public void SetBufSize(int index)
         {
 
-            if(index == (int)UnitSize.KBYTES)
+            if (index == (int)UnitSize.KBYTES)
             {
-                filebuf=new byte[fileBufSize*1024];
-            }else
-                filebuf=new byte[fileBufSize];
+                calcFileBufSize = fileBufSize * 1024;
+            }
+            else
+                calcFileBufSize = fileBufSize;
 
+            filebuf = new byte[calcFileBufSize];
         }
-        
+
     }
 }
 

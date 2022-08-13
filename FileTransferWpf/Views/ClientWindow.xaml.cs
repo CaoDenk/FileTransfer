@@ -65,13 +65,14 @@ namespace FileTransferWpf.views
             {
 
                 fullFilePaths = openFileDialog.FileNames;
+                string show = "";
                 foreach(string s in fullFilePaths)
                 {
-                    string tmp=s ;
-                    tmp += "\r\n";
-                    clientWindowViewModel.ShowContent += tmp;
+                    show += s;
+                    show += "\n";
 
                 }
+                clientWindowViewModel.ShowContent=show;
             }
 
         }

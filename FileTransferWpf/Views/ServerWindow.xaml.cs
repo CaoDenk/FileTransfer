@@ -46,6 +46,8 @@ namespace FileTransferWpf.Views
                 Button btn = (Button)(sender);
                 btn.Content = "已绑定";
                 btn.Background = Brushes.LightBlue;
+
+                serverWindowViewModel.SetBufSize(UnitSizeComboBox.SelectedIndex);
                 serverWindowViewModel.Listen(stackTag);
 
                 UnitSizeComboBox.IsHitTestVisible = false;

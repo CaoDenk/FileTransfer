@@ -47,7 +47,8 @@ namespace FileTransferWpf.Elements
                 ShowRecvText.Name = "ShowRecvText";
                 ShowRecvText.BorderThickness = new Thickness(0);
                 ShowRecvText.IsReadOnly = true;
-                ShowRecvText.Height = 40;
+                ShowRecvText.MinHeight = 40;
+                //ShowRecvText.AcceptsReturn = true;
            
 
                 showRecvProgress.showRecvText = ShowRecvText;
@@ -56,7 +57,7 @@ namespace FileTransferWpf.Elements
                 //输入框
                 TextBox textBox = new TextBox();
                 textBox.Name = "Content";
-                textBox.Height = 40;
+                textBox.MinHeight = 32;
                 textBox.AcceptsReturn = true;
                 textBox.FontSize = 18;
                 textBox.Margin = new Thickness(0, 0, 0, 5);

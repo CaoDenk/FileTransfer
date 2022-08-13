@@ -27,7 +27,7 @@
 				FontSize="18"
 				Margin="10,0,0,5">Client</Button>
         <TextBlock Margin="0,50,0,0">提示：</TextBlock>
-        <TextBlock Padding="24,0,0,0" >服务端的缓冲区设置的要和客户端的一样或者稍大</TextBlock>
+        <TextBlock Padding="24,0,0,0" >服务端的缓冲区设置的要和客户端的一样大或者稍大</TextBlock>
     
     </StackPanel>
 </Window>
