@@ -18,7 +18,9 @@ namespace FileTransferWpf.Models
         //public List<int> verifyPack=new List<int>();
         public DateTime start;
         public long hasRecvSize=0;
-        public int packOrder=1;
+        public int packOrder=0;
+
+        public int errorpack = 0;
 
         public ShowPercent showPercent;
         /// <summary>

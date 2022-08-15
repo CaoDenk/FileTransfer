@@ -31,6 +31,7 @@ namespace FileTransferWpf.ViewModels
         public int fileBufSize { set; get; }=32;
 
         int calcFileBufSize=32*1024;
+       
 
         public Dictionary<byte[], UUIDRecvFileModel> uuidRecvDict = new Dictionary<byte[], UUIDRecvFileModel>(new ByteCmp());
 
@@ -102,7 +103,6 @@ namespace FileTransferWpf.ViewModels
                         }catch(Exception e)
                         {
                             MessageBox.Show(e.Message);
-                            //return;
                             break;
                         }
 
@@ -179,6 +179,7 @@ namespace FileTransferWpf.ViewModels
                             int packnum1 = BitConverter.ToInt32(buf, len-4);
                             if (packnum0 != uuidRecvDict[uuidbytes].packOrder||packnum1!= uuidRecvDict[uuidbytes].packOrder)
                             {
+                                uuidRecvDict[uuidbytes].errorpack++;
                                 client.Send(SendHandle.SendResendPack(uuidbytes, uuidRecvDict[uuidbytes].packOrder, uuidRecvDict[uuidbytes].hasRecvSize));
                                 break;
                             }
@@ -206,9 +207,15 @@ namespace FileTransferWpf.ViewModels
                             if (uuidRecvDict[uuidbytes].hasRecvSize == uuidRecvDict[uuidbytes].filesize)
                             {
                                 TimeSpan duration = DateTime.Now - uuidRecvDict[uuidbytes].start;
-                                Task.Factory.StartNew(() =>
+                                Task.Run(() =>
                                 {
-                                    MessageBox.Show( "接收完成,花费" + duration.TotalSeconds + "s");
+                                    UUIDRecvFileModel model = uuidRecvDict[uuidbytes];
+                                    string s = string.Format(" 接收完成,花费{0},包总数{1}，错包个数{2},传输速度{3}MB/s",
+                                        duration.TotalSeconds,
+                                        model.packOrder,
+                                        model.errorpack,
+                                        model.filesize*1.0/1024/1024/duration.TotalSeconds);
+                                    MessageBox.Show(s);
                                 });
                                 client.Send(SendHandle.SendCloseSend(uuidbytes));
                                 uuidRecvDict[uuidbytes].stream.Close();
@@ -231,7 +238,6 @@ namespace FileTransferWpf.ViewModels
                             }
                             else
                             {
-                                // MessageBox.Show("接收失败");
                                 client.Send(SendHandle.SendResendPack(uuidbytes, uuidRecvDict[uuidbytes].packnum, uuidRecvDict[uuidbytes].hasRecvSize));
                             }
                             break;

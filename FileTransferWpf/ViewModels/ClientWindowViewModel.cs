@@ -37,7 +37,7 @@ namespace FileTransferWpf.ViewModels
         public int fileBufSize { set; get; } = 32;
 
         int calcFileBufSize = 32 * 1024;
-
+        int fullDataSize = 0;
         /// <summary>
         /// 文件缓冲区
         /// </summary>
@@ -105,7 +105,7 @@ namespace FileTransferWpf.ViewModels
 
                 UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
                 uUIDSendFileModel.filepath = fullFilePath;
-                uUIDSendFileModel.totalpacknum = (int)(fileInfo.Length / (Config.FILE_BUFFER_SIZE - 16) + 1);
+                uUIDSendFileModel.totalpacknum = (int)(fileInfo.Length / (fullDataSize) + 1);
                 //uUIDSendFileModel.
                 uuidSendDict.Add(Encoding.UTF8.GetBytes(uuid), uUIDSendFileModel);
 
@@ -212,7 +212,7 @@ namespace FileTransferWpf.ViewModels
             FileStream fileStream = uuidSendDict[uuidByte].stream;
             //Thread.Sleep(10);
             int len;
-            if ((len=fileStream.Read(filebuf,16, Config.FULL_SIZE)) >0)
+            if ((len=fileStream.Read(filebuf,16, fullDataSize)) >0)
             {
                 SendHandle.AddContinueRecv(filebuf, uuidSendDict[uuidByte].packnum);
                 Array.Copy(uuidByte,0,filebuf,8,8);
@@ -265,6 +265,7 @@ namespace FileTransferWpf.ViewModels
                 calcFileBufSize = fileBufSize;
 
             filebuf = new byte[calcFileBufSize];
+            fullDataSize = calcFileBufSize - 20;
         }
 
     }
