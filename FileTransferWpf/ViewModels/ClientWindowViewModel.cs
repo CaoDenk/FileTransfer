@@ -151,10 +151,19 @@ namespace FileTransferWpf.ViewModels
                             case InfoHeader.RESEND_PACK:
                                 uuidBytes = buf[8..16];
                                 int packageOrder = BitConverter.ToInt32(buf, 4);
-                                uuidSendDict[uuidBytes].packnum = packageOrder;
-                                long offset = BitConverter.ToInt64(buf, 16);
-                                ResendPack(uuidBytes, offset);
-                                SendFile(uuidBytes);
+                                if(packageOrder == uuidSendDict[uuidBytes].packnum)
+                                {
+                                    ClientSocket.Send(filebuf);
+                                }else
+                                {
+                                    uuidSendDict[uuidBytes].packnum = packageOrder;
+                                    long offset = BitConverter.ToInt64(buf, 16);
+                                    ResendPack(uuidBytes, offset);
+                                    SendFile(uuidBytes);
+                                }
+
+
+
                                 break;
 
                             case InfoHeader.CLOSE_SEND:
@@ -212,7 +221,7 @@ namespace FileTransferWpf.ViewModels
             FileStream fileStream = uuidSendDict[uuidByte].stream;
             //Thread.Sleep(10);
             int len;
-            if ((len=fileStream.Read(filebuf,16, Config.FULL_SIZE)) >0)
+            if ((len=fileStream.Read(filebuf,16, calcFileBufSize-20)) >0)
             {
                 SendHandle.AddContinueRecv(filebuf, uuidSendDict[uuidByte].packnum);
                 Array.Copy(uuidByte,0,filebuf,8,8);
@@ -266,7 +275,7 @@ namespace FileTransferWpf.ViewModels
 
             filebuf = new byte[calcFileBufSize];
         }
-
+    
     }
 }
 
