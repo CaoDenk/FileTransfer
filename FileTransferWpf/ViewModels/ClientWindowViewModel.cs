@@ -221,11 +221,8 @@ namespace FileTransferWpf.ViewModels
             FileStream fileStream = uuidSendDict[uuidByte].stream;
             //Thread.Sleep(10);
             int len;
-<<<<<<< HEAD
+
             if ((len=fileStream.Read(filebuf,16, fullDataSize)) >0)
-=======
-            if ((len=fileStream.Read(filebuf,16, calcFileBufSize-20)) >0)
->>>>>>> 848697e0b23696e2322e47a6e59c6fa7d53f2555
             {
                 SendHandle.AddContinueRecv(filebuf, uuidSendDict[uuidByte].packnum);
                 Array.Copy(uuidByte,0,filebuf,8,8);

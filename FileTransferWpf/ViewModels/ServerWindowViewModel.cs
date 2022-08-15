@@ -219,7 +219,6 @@ namespace FileTransferWpf.ViewModels
                                 TimeSpan duration = DateTime.Now - uuidRecvDict[uuidbytes].start;
                                 Task.Run(() =>
                                 {
-<<<<<<< HEAD
                                     UUIDRecvFileModel model = uuidRecvDict[uuidbytes];
                                     string s = string.Format(" 接收完成,花费{0},包总数{1}，错包个数{2},传输速度{3}MB/s",
                                         duration.TotalSeconds,
@@ -227,11 +226,7 @@ namespace FileTransferWpf.ViewModels
                                         model.errorpack,
                                         model.filesize*1.0/1024/1024/duration.TotalSeconds);
                                     MessageBox.Show(s);
-=======
-                                    string msg = string.Format("接收完成,花费{0},总包个数{1},错包个数{2}", duration.TotalSeconds, uuidRecvDict[uuidbytes].packOrder, errorPack);
-                                    MessageBox.Show( msg);
-                                    
->>>>>>> 848697e0b23696e2322e47a6e59c6fa7d53f2555
+
                                 });
                                 client.Send(SendHandle.SendCloseSend(uuidbytes));
                                 uuidRecvDict[uuidbytes].stream.Close();
