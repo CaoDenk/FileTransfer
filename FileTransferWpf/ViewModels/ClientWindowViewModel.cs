@@ -38,10 +38,7 @@ namespace FileTransferWpf.ViewModels
 
         int calcFileBufSize = 32 * 1024;
         int fullDataSize = 0;
-        /// <summary>
-        /// 文件缓冲区
-        /// </summary>
-        byte[] filebuf;
+
         // List<string> 
         public StackPanel panel;
         string content;
@@ -98,12 +95,9 @@ namespace FileTransferWpf.ViewModels
                 js.Add("filename", fileInfo.Name);
                 js.Add("filesize", fileInfo.Length);
 
-
                 js.Add("uuid", uuid);
 
-
-
-                UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel();
+                UUIDSendFileModel uUIDSendFileModel = new UUIDSendFileModel(calcFileBufSize);
                 uUIDSendFileModel.filepath = fullFilePath;
                 uUIDSendFileModel.totalpacknum = (int)(fileInfo.Length / (fullDataSize) + 1);
                 //uUIDSendFileModel.
@@ -121,10 +115,9 @@ namespace FileTransferWpf.ViewModels
         public void Recv(Action<bool> changeBtnColor)
         {
             
-
             Task.Factory.StartNew(() =>
             {
-                byte[] buf = new byte[calcFileBufSize];
+                byte[] buf = new byte[Config.TEXT_BUFER_SIZE];
                 while (true)
                 {
                     try
@@ -150,21 +143,13 @@ namespace FileTransferWpf.ViewModels
                                 break;
                             case InfoHeader.RESEND_PACK:  //如果同时发送多个文件可以存在队列里
 
-                                ClientSocket.Send(filebuf);
-                                //uuidBytes = buf[8..16];
-                                //int packageOrder = BitConverter.ToInt32(buf, 4);
+                               
+                                uuidBytes = buf[8..16];
+                                int packageOrder = BitConverter.ToInt32(buf, 4);
 
-                                ////如果上个包错了
-                                //if(packageOrder == uuidSendDict[uuidBytes].packnum)
-                                //{
-                                //    ClientSocket.Send(filebuf);
-                                //}else  //这个是不会出现的
-                                //{
-                                //    uuidSendDict[uuidBytes].packnum = packageOrder;
-                                //    long offset = BitConverter.ToInt64(buf, 16);
-                                //    ResendPack(uuidBytes, offset);
-                                //    SendFile(uuidBytes);
-                                //}
+                                UUIDSendFileModel uUIDSendFile = uuidSendDict[uuidBytes];
+                                ClientSocket.Send(uUIDSendFile.data);
+                              
                                 break;
 
                             case InfoHeader.CLOSE_SEND:
@@ -176,8 +161,6 @@ namespace FileTransferWpf.ViewModels
                                     panel.Children.Remove(delshowPercent.bar);
                                     panel.Children.Remove(delshowPercent.percent);
                                 });
-
-
                                 uuidSendDict[uuidBytes].stream.Close();
                                 uuidSendDict.Remove(uuidBytes);
                                 break;
@@ -216,11 +199,11 @@ namespace FileTransferWpf.ViewModels
         }
         public void SendFile(byte[] uuidByte)
         {
-            
-            FileStream fileStream = uuidSendDict[uuidByte].stream;
-            //Thread.Sleep(10);
-            int len;
 
+            UUIDSendFileModel uUIDSendFile = uuidSendDict[uuidByte];
+            FileStream fileStream = uUIDSendFile.stream;
+            byte[] filebuf = uUIDSendFile.data;
+            int len;
             if ((len=fileStream.Read(filebuf,16, fullDataSize)) >0)
             {
                 SendHandle.AddContinueRecv(filebuf, uuidSendDict[uuidByte].packnum);
