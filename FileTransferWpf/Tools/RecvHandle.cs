@@ -19,10 +19,11 @@ namespace FileTransferWpf.Tools
         }
 
 
-        public static string GetProcessedText(byte[] data,int len)
+        public static string GetProcessedText(byte[] data)
         {
+            int len=BitConverter.ToInt32(data,4);
 
-            return Encoding.UTF8.GetString(data, OFFSET, len- OFFSET);
+            return Encoding.UTF8.GetString(data, OFFSET, len);
 
         }
 

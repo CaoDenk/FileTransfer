@@ -26,6 +26,8 @@ namespace FileTransferWpf.Tools
             byte[] dataWithHeader= new byte[bytes.Length+OFFSET];
 
             WriteDataToBuffer(dataWithHeader, InfoHeader.TEXT, 0);
+            //第四字节写上文本大小
+            WriteDataToBuffer(dataWithHeader, bytes.Length, 4);
             Array.Copy(bytes, 0, dataWithHeader, OFFSET, bytes.Length);
             return dataWithHeader;
         }

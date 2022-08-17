@@ -121,7 +121,7 @@ namespace FileTransferWpf.ViewModels
             byte[] uuidbytes = null;
             HashSet<byte[]> set = new HashSet<byte[]>(new ByteCmp());
 
-            int errorPack = 0;
+
             while (true)
             {
 
@@ -133,7 +133,7 @@ namespace FileTransferWpf.ViewModels
                     switch (type)
                     {
                         case InfoHeader.TEXT:
-                            ShowContent(buf, showRecvProgress.showRecvText, len);
+                            ShowContent(buf, showRecvProgress.showRecvText);
                             break;
                         case InfoHeader.FILE:
                             RecvFile recv = RecvHandle.GetRecvFileInfo(buf);
@@ -181,17 +181,11 @@ namespace FileTransferWpf.ViewModels
                             {
                                 uuidRecvDict[uuidbytes].errorpack++;
                                 client.Send(SendHandle.SendResendPack(uuidbytes, uuidRecvDict[uuidbytes].packOrder, uuidRecvDict[uuidbytes].hasRecvSize));
-                                errorPack++;
+                             
                                 break;
                             }
-
-
-                    
-                        
-
-
-
-
+                            byte[] recvOk = SendHandle.SendRecvOk(uuidbytes);
+                            client.SendAsync(recvOk, SocketFlags.None);
 
                             uuidRecvDict[uuidbytes].packOrder++;
                             uuidRecvDict[uuidbytes].hasRecvSize += len - 20;
@@ -199,8 +193,6 @@ namespace FileTransferWpf.ViewModels
                             uuidRecvDict[uuidbytes].stream.Flush();
 
                             //发送接受成功
-                            byte[] recvOk = SendHandle.SendRecvOk(uuidbytes);
-                            client.SendAsync(recvOk, SocketFlags.None);
 
                             double percent = uuidRecvDict[uuidbytes].hasRecvSize * 1.0 / uuidRecvDict[uuidbytes].filesize * 100;
                             AddElements.SetBarValue(uuidRecvDict[uuidbytes].showPercent, percent);
@@ -217,35 +209,32 @@ namespace FileTransferWpf.ViewModels
                             if (uuidRecvDict[uuidbytes].hasRecvSize == uuidRecvDict[uuidbytes].filesize)
                             {
                                 TimeSpan duration = DateTime.Now - uuidRecvDict[uuidbytes].start;
+                               
+                                client.SendAsync(SendHandle.SendCloseSend(uuidbytes),SocketFlags.None);
+                                uuidRecvDict[uuidbytes].stream.Close();
+
+                              
+                              
                                 Task.Run(() =>
                                 {
+                                    ShowPercent showPercent = uuidRecvDict[uuidbytes].showPercent;
+                                    Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        showRecvProgress.stackPanelParent.Children.Remove(showPercent.bar);
+                                        showRecvProgress.stackPanelParent.Children.Remove(showPercent.percent);
+
+                                    });
                                     UUIDRecvFileModel model = uuidRecvDict[uuidbytes];
                                     string s = string.Format(" 接收完成,花费{0},包总数{1}，错包个数{2},传输速度{3}MB/s",
                                         duration.TotalSeconds,
                                         model.packOrder,
                                         model.errorpack,
-                                        model.filesize*1.0/1024/1024/duration.TotalSeconds);
+                                        model.filesize * 1.0 / 1024 / 1024 / duration.TotalSeconds);
                                     MessageBox.Show(s);
-
+                                    uuidRecvDict.Remove(uuidbytes);
+                                    set.Remove(uuidbytes);
                                 });
-                                client.Send(SendHandle.SendCloseSend(uuidbytes));
-                                uuidRecvDict[uuidbytes].stream.Close();
-
-                                errorPack = 0;
-                                ShowPercent showPercent = uuidRecvDict[uuidbytes].showPercent;
-
-
-                                Application.Current.Dispatcher.Invoke(() =>
-                                {
-                                    showRecvProgress.stackPanelParent.Children.Remove(showPercent.bar);
-                                    showRecvProgress.stackPanelParent.Children.Remove(showPercent.percent);
-
-                                });
-
-                                uuidRecvDict.Remove(uuidbytes);
-                                set.Remove(uuidbytes);
-
-
+                            
                             }
                             else
                             {
@@ -297,8 +286,6 @@ namespace FileTransferWpf.ViewModels
                                 uuidRecvDict.Remove(uuidkey);
                             }
                         }
-
-
                     }
                     break;
 
@@ -314,11 +301,11 @@ namespace FileTransferWpf.ViewModels
         /// <param name="buf"></param>
         /// <param name="panel"></param>
         /// <param name="len"></param>
-        void ShowContent(byte[] buf, TextBox textbox, int len)
+        void ShowContent(byte[] buf, TextBox textbox)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                textbox.Text = RecvHandle.GetProcessedText(buf, len);
+                textbox.Text = RecvHandle.GetProcessedText(buf);
             });
 
         }

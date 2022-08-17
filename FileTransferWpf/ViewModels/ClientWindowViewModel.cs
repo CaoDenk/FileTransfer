@@ -135,7 +135,7 @@ namespace FileTransferWpf.ViewModels
                         switch (type)
                         {
                             case InfoHeader.TEXT:
-                                ShowContent = RecvHandle.GetProcessedText(buf, len);
+                                ShowContent = RecvHandle.GetProcessedText(buf);
                                 break;
                             case InfoHeader.FILE:
                                 MessageBox.Show("是否接收文件", "消息", MessageBoxButton.YesNo);
@@ -148,22 +148,23 @@ namespace FileTransferWpf.ViewModels
                                 uuidSendDict[uuidBytes].showPercent = AddElements.AddProgressFromStackPanel(panel);
                                 SendFile(uuidBytes);
                                 break;
-                            case InfoHeader.RESEND_PACK:
-                                uuidBytes = buf[8..16];
-                                int packageOrder = BitConverter.ToInt32(buf, 4);
-                                if(packageOrder == uuidSendDict[uuidBytes].packnum)
-                                {
-                                    ClientSocket.Send(filebuf);
-                                }else
-                                {
-                                    uuidSendDict[uuidBytes].packnum = packageOrder;
-                                    long offset = BitConverter.ToInt64(buf, 16);
-                                    ResendPack(uuidBytes, offset);
-                                    SendFile(uuidBytes);
-                                }
+                            case InfoHeader.RESEND_PACK:  //如果同时发送多个文件可以存在队列里
 
+                                ClientSocket.Send(filebuf);
+                                //uuidBytes = buf[8..16];
+                                //int packageOrder = BitConverter.ToInt32(buf, 4);
 
-
+                                ////如果上个包错了
+                                //if(packageOrder == uuidSendDict[uuidBytes].packnum)
+                                //{
+                                //    ClientSocket.Send(filebuf);
+                                //}else  //这个是不会出现的
+                                //{
+                                //    uuidSendDict[uuidBytes].packnum = packageOrder;
+                                //    long offset = BitConverter.ToInt64(buf, 16);
+                                //    ResendPack(uuidBytes, offset);
+                                //    SendFile(uuidBytes);
+                                //}
                                 break;
 
                             case InfoHeader.CLOSE_SEND:
@@ -184,9 +185,7 @@ namespace FileTransferWpf.ViewModels
                                 uuidBytes = buf[8..16];
                                 uuidSendDict[uuidBytes].packnum++;
                                 double percent = (uuidSendDict[uuidBytes].packnum * 100.0 / uuidSendDict[uuidBytes].totalpacknum);
-                                AddElements.SetBarValue(uuidSendDict[uuidBytes].showPercent, percent);
-                          
-
+                                AddElements.SetBarValue(uuidSendDict[uuidBytes].showPercent, percent);                     
                                 SendFile(uuidBytes);
                                 break;
                             case InfoHeader.REFUSE_RECV:
