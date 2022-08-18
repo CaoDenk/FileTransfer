@@ -256,7 +256,7 @@ namespace FileTransferWpf.ViewModels
             else
                 calcFileBufSize = fileBufSize;
 
-            filebuf = new byte[calcFileBufSize];
+   
             fullDataSize = calcFileBufSize - 20;
         }
     
