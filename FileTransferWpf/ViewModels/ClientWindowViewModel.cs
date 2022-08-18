@@ -124,7 +124,7 @@ namespace FileTransferWpf.ViewModels
                     {
                         int len = ClientSocket.Receive(buf);
                         int type = RecvHandle.GetDataType(buf);
-                        byte[] uuidBytes = null;
+                        byte[]? uuidBytes = null;
                         switch (type)
                         {
                             case InfoHeader.TEXT:
@@ -141,9 +141,7 @@ namespace FileTransferWpf.ViewModels
                                 uuidSendDict[uuidBytes].showPercent = AddElements.AddProgressFromStackPanel(panel);
                                 SendFile(uuidBytes);
                                 break;
-                            case InfoHeader.RESEND_PACK:  //如果同时发送多个文件可以存在队列里
-
-                               
+                            case InfoHeader.RESEND_PACK:  //如果同时发送多个文件可以存在队列里,算了，太复杂                               
                                 uuidBytes = buf[8..16];
                                 int packageOrder = BitConverter.ToInt32(buf, 4);
 
@@ -204,11 +202,11 @@ namespace FileTransferWpf.ViewModels
             FileStream fileStream = uUIDSendFile.stream;
             byte[] filebuf = uUIDSendFile.data;
             int len;
-            if ((len=fileStream.Read(filebuf,16, fullDataSize)) >0)
+            if ((len=fileStream.Read(filebuf,Config.OFFSET, fullDataSize)) >0)
             {
                 SendHandle.AddContinueRecv(filebuf, uuidSendDict[uuidByte].packnum);
                 Array.Copy(uuidByte,0,filebuf,8,8);
-                SendHandle.WriteDataToBuffer(filebuf, uuidSendDict[uuidByte].packnum, len+16);
+                SendHandle.WriteDataToBuffer(filebuf, uuidSendDict[uuidByte].packnum, len+Config.OFFSET);
 
                 ClientSocket.Send(filebuf,0,len+20,SocketFlags.None);
                
@@ -220,15 +218,7 @@ namespace FileTransferWpf.ViewModels
           
         }
 
-        /// <summary>
-        /// 重新发送下文件
-        /// </summary>
-        /// <param name="uuidBytes"></param>
-        /// <param name="offset"></param>
-        void ResendPack(byte[] uuidBytes,long offset)
-        {
-            uuidSendDict[uuidBytes].stream.Seek(offset, SeekOrigin.Begin);
-        }
+
         public void Close()
         {
 

@@ -113,7 +113,7 @@ namespace FileTransferWpf.ViewModels
 
 
         }
-        async void ReceiveByOneClient(StackPanel parentPanel, Socket client, ShowRecvProgress showRecvProgress)
+         void ReceiveByOneClient(StackPanel parentPanel, Socket client, ShowRecvProgress showRecvProgress)
         {
             byte[] buf = new byte[calcFileBufSize];
 
@@ -196,8 +196,6 @@ namespace FileTransferWpf.ViewModels
 
                             double percent = uuidRecvDict[uuidbytes].hasRecvSize * 1.0 / uuidRecvDict[uuidbytes].filesize * 100;
                             AddElements.SetBarValue(uuidRecvDict[uuidbytes].showPercent, percent);
-                            
-
                             break;
                         case InfoHeader.FINISHED:
 
@@ -213,8 +211,6 @@ namespace FileTransferWpf.ViewModels
                                 client.SendAsync(SendHandle.SendCloseSend(uuidbytes),SocketFlags.None);
                                 uuidRecvDict[uuidbytes].stream.Close();
 
-                              
-                              
                                 Task.Run(() =>
                                 {
                                     ShowPercent showPercent = uuidRecvDict[uuidbytes].showPercent;
@@ -266,7 +262,6 @@ namespace FileTransferWpf.ViewModels
                 catch (Exception e)
                 {
                     MessageBox.Show(e.Message);
-
                     if (!client.Connected)
                     {
 
