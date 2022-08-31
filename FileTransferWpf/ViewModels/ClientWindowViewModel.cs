@@ -224,7 +224,7 @@ namespace FileTransferWpf.ViewModels
 
             CloseIOStream(); 
             ClientSocket.Close();
-
+            SaveIp();
         }
 
         void CloseIOStream()
@@ -249,8 +249,18 @@ namespace FileTransferWpf.ViewModels
    
             fullDataSize = calcFileBufSize - 20;
         }
-    
+        void SaveIp()
+        {
+            FileStream fileStream = File.Create("tmp/savedip.txt");
+            //if(fileStream.CanWrite)
+            byte[] buf = Encoding.Default.GetBytes(client.Ip);
+            fileStream.Write(buf);
+            fileStream.Close();
+
+        }
     }
+    
+
 }
 
 
