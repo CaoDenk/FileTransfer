@@ -249,13 +249,20 @@ namespace FileTransferWpf.ViewModels
    
             fullDataSize = calcFileBufSize - 20;
         }
+        /// <summary>
+        /// 保存ip到文件中
+        /// </summary>
         void SaveIp()
         {
-            FileStream fileStream = File.Create("tmp/savedip.txt");
-            //if(fileStream.CanWrite)
-            byte[] buf = Encoding.Default.GetBytes(client.Ip);
-            fileStream.Write(buf);
-            fileStream.Close();
+            
+ 
+
+            using(FileStream fileStream = File.Create("tmp/savedip.txt"))
+            {
+                byte[] buf = Encoding.Default.GetBytes(client.Ip);
+                fileStream.Write(buf);
+
+            }
 
         }
     }

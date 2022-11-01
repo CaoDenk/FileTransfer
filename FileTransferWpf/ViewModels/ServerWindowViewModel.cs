@@ -7,6 +7,7 @@ using FileTransferWpf.Tools;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -117,8 +118,8 @@ namespace FileTransferWpf.ViewModels
         {
             byte[] buf = new byte[calcFileBufSize];
 
-
-            byte[] uuidbytes = null;
+            
+            byte[]? uuidbytes = null;
             HashSet<byte[]> set = new HashSet<byte[]>(new ByteCmp());
 
 
@@ -240,7 +241,6 @@ namespace FileTransferWpf.ViewModels
 
                         default:
                             //如果set中存在uuidbytes ，猜测这可能是发送文件的时候出现的,催促重新发送
-
                             if (set.Count() == 0)
                             {
                                 MessageBox.Show( "不合法的请求头");
@@ -309,11 +309,11 @@ namespace FileTransferWpf.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        
         private  void SendText(object sender, RoutedEventArgs e)
         {
-            Button btn=sender as Button;
-
-            StackPanel parent = btn.Parent as StackPanel;
+            Button btn=(Button)sender;          
+            StackPanel parent = (StackPanel)btn.Parent ;
             TextBox textBox = parent.FindByName<TextBox>("Content");
             byte[] data = SendHandle.AddTextInfoHeader(textBox.Text);
             stackPanelSocketDict[parent].SendAsync(data, SocketFlags.None);

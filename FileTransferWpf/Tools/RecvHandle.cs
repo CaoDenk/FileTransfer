@@ -1,6 +1,7 @@
 ﻿using FileTransferWpf.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -32,8 +33,13 @@ namespace FileTransferWpf.Tools
 
             int jsInfoSize = BitConverter.ToInt32(data, 4);
             ReadOnlySpan<byte> jsInfoHeaderByte= new ReadOnlySpan<byte>(data);
-            JsonNode jsn = JsonNode.Parse(jsInfoHeaderByte.Slice(OFFSET, jsInfoSize));
+            JsonNode jsn  = JsonNode.Parse(jsInfoHeaderByte.Slice(OFFSET, jsInfoSize));
            
+            //if(jsn==null)
+            //{
+            //    throw new Exception();
+            //}
+
             RecvFile recvFile = new RecvFile();
             recvFile.filename = jsn.GetValue<string>("filename");
             recvFile.filesize = jsn.GetValue<long>("filesize");

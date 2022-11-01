@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,8 +11,12 @@ using System.Threading.Tasks;
 namespace FileTransferWpf.ViewModels
 {
     internal class MainWindowViewModel: INotifyPropertyChanged
-    { 
+    {
         //string localIpv4;
+        //[MaybeNull]
+        /// <summary>
+        /// 不可能为null
+        /// </summary>
         public string LocalIpv4 { set; get; }
         
         

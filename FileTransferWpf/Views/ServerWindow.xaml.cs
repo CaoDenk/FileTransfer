@@ -43,7 +43,7 @@ namespace FileTransferWpf.Views
                 MessageBox.Show("绑定端口失败，请尝试更换端口", "错误");
             }else
             {
-                Button btn = (Button)(sender);
+                Button btn = sender as Button;
                 btn.Content = "已绑定";
                 btn.Background = Brushes.LightBlue;
 

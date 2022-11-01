@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,8 @@ namespace FileTransferWpf.Tools
 {
     internal static class FindControl
     {
-        public static T? FindByName<T>(this StackPanel panel, string name) where T : FrameworkElement
+        //[return: NotNull]
+        public static T FindByName<T>(this StackPanel panel, string name) where T : FrameworkElement
         {
             
             foreach(FrameworkElement c in panel.Children)
@@ -18,7 +20,7 @@ namespace FileTransferWpf.Tools
                 if (c.Name == name)
                     return (T)c;
             }
-            return null;
+            throw new ArgumentException("null pointer");
         }
 
 
